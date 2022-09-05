@@ -1,0 +1,19 @@
+{
+  "name": "chess-bot-backend",
+  "version": "1.0.0",
+  "description": "Simple stockfish HTTP server",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "test": "node test.js",
+    "test:http": "bash test.sh"
+  },
+  "dependencies": {
+    "express": "^4.18.1",
+    "stockfish": "^11.0.0"
+  },
+  "keywords": [
+    "stockfish",
+    "nodejs"
+  ]
+}
