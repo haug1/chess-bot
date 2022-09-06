@@ -58,3 +58,4 @@ You need to have these tools:
    2. click `This Firefox`
    3. click `Load Temporary Add-on...`
    4. choose the `frontend/manifest.json` file
+4. go to [chess.com computer play](https://www.chess.com/play/computer) (refreshing page after game begins may be required)
