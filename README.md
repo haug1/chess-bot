@@ -46,7 +46,7 @@ You need to have these tools:
 - node.js 16
 - firefox
 
-## installation process
+## installation & usage process
 
 1. clone the repo: `git clone git@github.com:haug1/chess-bot.git`
 2. install stockfish server
