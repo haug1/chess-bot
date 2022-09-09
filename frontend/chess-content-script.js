@@ -52,9 +52,9 @@ async function askStockfish(fen) {
   const httpResponse = await fetch("http://localhost:8080", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "text/plain",
     },
-    body: JSON.stringify({ fen }),
+    body: fen,
   });
   return httpResponse.text();
 }

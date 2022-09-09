@@ -16,9 +16,7 @@ Has 2 components:
 
 - has a ready stockfish engine and functions for analysing best moves based on FEN string
 - `POST /` endpoint for getting stockfish best move analysis based on chess FEN string
-
-  - `application/json` request body
-    - `fen` request body parameter for FEN string
+  - `Content-Type: text/plain` request body should be the FEN string to analyze
 
 ### Sample request/response
 
@@ -26,8 +24,8 @@ Request
 
 ```
 POST http://localhost:8080/
-application/json
-{ "fen": "rnbqkbnr/pp1ppppp/8/2p5/8/3P4/PPP1PPPP/RNBQKBNR w KQkq c6 0 2" }
+Content-Type: text/plain
+rnbqkbnr/pp1ppppp/8/2p5/8/3P4/PPP1PPPP/RNBQKBNR w KQkq c6 0 2
 ```
 
 Response

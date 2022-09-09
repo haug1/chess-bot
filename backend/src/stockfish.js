@@ -1,5 +1,5 @@
-const stockfish = require("stockfish")();
-const { debug, log } = require("./logger.js");
+import stockfish from "stockfish";
+import { debug, log } from "./logger.js";
 
 let engine;
 
@@ -17,49 +17,49 @@ function removeEngineMessageListener(messageHandler) {
   engine.addMessageListener(defaultMessageHandler);
 }
 
-module.exports = {
-  async initialize() {
-    debug("initializing..");
+export async function initializeStockfish() {
+  if (engine) return;
 
-    engine = await stockfish();
+  log("Initializing engine..");
 
-    return new Promise((resolve) => {
-      const messageHandler = (msg) => {
-        defaultMessageHandler(msg);
-        if (msg === "uciok") {
-          debug("initialized ok");
-          removeEngineMessageListener(messageHandler);
-          resolve();
-        }
-      };
+  engine = await stockfish()();
 
-      addEngineMessageListener(messageHandler);
-      engine.postMessage("uci");
-      debug("waiting for engine..");
-    });
-  },
-  async getBestMoveBasedOnFEN(fenString) {
-    log("Checking FEN: " + fenString);
+  return new Promise((resolve) => {
+    const messageHandler = (msg) => {
+      defaultMessageHandler(msg);
+      if (msg === "uciok") {
+        log("Initialized ok");
+        removeEngineMessageListener(messageHandler);
+        resolve();
+      }
+    };
 
-    if (!engine) {
-      throw new Error("Engine is not ready");
-    }
+    addEngineMessageListener(messageHandler);
+    engine.postMessage("uci");
+  });
+}
 
-    return new Promise((resolve) => {
-      const messageHandler = (msg) => {
-        defaultMessageHandler(msg);
-        if (typeof (msg == "string") && msg.match("bestmove")) {
-          log("Found best move: " + msg);
-          removeEngineMessageListener(messageHandler);
-          resolve(msg);
-        }
-      };
+export async function getBestMoveBasedOnFEN(fenString) {
+  log("Checking FEN: " + fenString);
 
-      addEngineMessageListener(messageHandler);
-      engine.postMessage("ucinewgame");
-      engine.postMessage("position fen " + fenString);
-      engine.postMessage("go depth 18");
-      debug("Waiting for engine..");
-    });
-  },
-};
+  if (!engine) {
+    throw new Error("Engine is not ready");
+  }
+
+  return new Promise((resolve) => {
+    const messageHandler = (msg) => {
+      defaultMessageHandler(msg);
+      if (typeof (msg == "string") && msg.match("bestmove")) {
+        log("Found best move: " + msg);
+        removeEngineMessageListener(messageHandler);
+        resolve(msg);
+      }
+    };
+
+    addEngineMessageListener(messageHandler);
+    engine.postMessage("ucinewgame");
+    engine.postMessage("position fen " + fenString);
+    engine.postMessage("go depth 18");
+    log("Waiting for engine..");
+  });
+}
