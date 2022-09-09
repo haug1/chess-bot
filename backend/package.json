@@ -3,15 +3,19 @@
   "version": "1.0.0",
   "description": "Simple stockfish HTTP server",
   "main": "src/main.js",
+  "type": "module",
   "scripts": {
-    "start": "node --experimental-wasm-threads --experimental-wasm-simd src/main.js",
-    "test": "node test.js",
-    "test:http": "bash test.sh",
+    "start": "ENV=development node src/main.js",
+    "test": "ENV=development node test/test-runner.js",
+    "test:http": "bash test/test.sh",
     "postinstall": "cp node_modules/stockfish/src/stockfish.js node_modules/stockfish/src/stockfish.worker.js"
   },
   "dependencies": {
-    "express": "^4.18.1",
+    "fastify": "^4.5.3",
     "stockfish": "^15.0.0"
+  },
+  "devDependencies": {
+    "pino-pretty": "^9.1.0"
   },
   "keywords": [
     "stockfish",

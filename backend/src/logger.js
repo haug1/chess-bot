@@ -1,10 +1,9 @@
-const debug = false;
+import { fastify } from "./server.js";
 
-module.exports = {
-  debug(msg) {
-    if (debug) console.log(msg);
-  },
-  log(msg) {
-    console.log(msg);
-  },
-};
+export function debug(msg) {
+  fastify.log.debug(msg);
+}
+
+export function log(msg) {
+  fastify.log.info(msg);
+}
