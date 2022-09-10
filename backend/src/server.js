@@ -1,4 +1,3 @@
-// Require the framework and instantiate it
 import createFastify from "fastify";
 import { getBestMoveBasedOnFEN } from "./stockfish.js";
 

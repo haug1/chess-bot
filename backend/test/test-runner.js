@@ -31,7 +31,9 @@ async function main() {
           } ms`
         );
       } else {
-        throw new Error(`ERROR: ${testName}.${funcName} test assertion failed`);
+        throw new Error(
+          `ERROR: ${testName}.${funcName} test assertion failed. ${testResult.expectedResult} is not equal to ${testResult.result}`
+        );
       }
     }
 

@@ -46,13 +46,17 @@ export async function getBestMoveBasedOnFEN(fenString) {
     throw new Error("Engine is not ready");
   }
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const messageHandler = (msg) => {
       defaultMessageHandler(msg);
-      if (typeof (msg == "string") && msg.match("bestmove")) {
-        log("Found best move: " + msg);
-        removeEngineMessageListener(messageHandler);
-        resolve(msg);
+      if (typeof msg === "string") {
+        if (msg.match("bestmove")) {
+          log("Found best move: " + msg);
+          removeEngineMessageListener(messageHandler);
+          resolve(msg);
+        } else if (msg.includes("pthread sent an error")) {
+          reject(new Error(msg));
+        }
       }
     };
 

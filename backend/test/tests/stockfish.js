@@ -8,7 +8,7 @@ export class StockfishTests {
     await initializeStockfish();
   }
 
-  async testGetBestMoveBasedOnFEN() {
+  async test_getBestMoveBasedOnFEN() {
     return {
       result: await getBestMoveBasedOnFEN(
         "rnbqkbnr/pp1ppppp/8/2p5/8/3P4/PPP1PPPP/RNBQKBNR w KQkq c6 0 2"
