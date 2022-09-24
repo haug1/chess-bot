@@ -18,12 +18,16 @@ export abstract class ChessbotExtension {
   }
 
   abstract scrapeMoves(): string[];
+  abstract isGame(): boolean;
   abstract get observingElement(): Node;
 
   private main() {
-    setTimeout(() => {
-      this.onMove();
-      this.observeMoves();
+    const interval = setInterval(() => {
+      if (this.isGame()) {
+        clearInterval(interval);
+        this.onMove();
+        this.observeMoves();
+      }
     }, 1000);
   }
 

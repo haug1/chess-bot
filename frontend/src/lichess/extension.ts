@@ -18,4 +18,15 @@ export class LichessExtension extends ChessbotExtension {
       if (element.textContent) moves.push(element.textContent);
     return moves;
   }
+
+  isGame(): boolean {
+    const gameReadyElement = document.querySelector(
+      ".message > div:nth-child(1)"
+    );
+    const gameReady =
+      (gameReadyElement &&
+        gameReadyElement.textContent?.includes("It's your turn!")) ||
+      false;
+    return !!document.querySelector("l4x") || gameReady;
+  }
 }
