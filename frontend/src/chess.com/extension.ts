@@ -18,4 +18,8 @@ export class ChessComExtension extends ChessbotExtension {
       if (element.textContent) moves.push(element.textContent);
     return moves;
   }
+
+  isGame() {
+    return !!document.querySelector("vertical-move-list");
+  }
 }
