@@ -31,9 +31,19 @@ export class LichessHighlights extends Highlights {
   ) {
     const fromHighlight = highlight.from as SVGCircleElement;
     const toHighlight = highlight.to as SVGCircleElement;
+    const isBlack = document
+      .querySelector("coords.files")!
+      .classList.contains("black");
     const calc = (pos: number, isX = false) => {
       const position = parseInt(pos.toString());
-      const result = isX ? -3.5 + position - 1 : 3.5 - position + 1;
+      let result;
+
+      if (isBlack) {
+        result = isX ? 3.5 - position + 1 : -3.5 + position - 1;
+      } else {
+        result = isX ? -3.5 + position - 1 : 3.5 - position + 1;
+      }
+
       return result.toString();
     };
     fromHighlight.setAttributeNS(null, "cx", calc(move.from.x, true));
