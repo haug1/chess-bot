@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "npm run build && npm run move",
     "build": "rollup -c build/rollup.config.js",
-    "move": "rm -rf /mnt/c/Users/Desktop/frontend && cp -r dist/* /mnt/c/Users/lars-/Desktop/frontend"
+    "move": "rm -rf /mnt/c/Users/Desktop/frontend && cp -r bin/* /mnt/c/Users/lars-/Desktop/frontend"
   },
   "keywords": [],
   "author": "",

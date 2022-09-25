@@ -7,7 +7,7 @@ function createConfig(name) {
   return {
     input: `src/${name}/index.ts`,
     output: {
-      dir: "dist/" + name,
+      dir: "bin/" + name,
       format: "iife",
     },
     plugins: [
