@@ -10,8 +10,8 @@ export class LichessHighlights extends Highlights {
     element.id = id;
     element.setAttributeNS(null, "cx", "0");
     element.setAttributeNS(null, "cy", "0");
-    element.setAttributeNS(null, "r", "0.46875");
-    element.setAttributeNS(null, "stroke-width", "0.0625");
+    element.setAttributeNS(null, "r", "0.4");
+    element.setAttributeNS(null, "stroke-width", "0.1");
     element.setAttributeNS(null, "stroke", color);
     element.setAttributeNS(null, "opacity", "1");
     element.setAttributeNS(null, "fill", "none");
@@ -50,5 +50,12 @@ export class LichessHighlights extends Highlights {
     fromHighlight.setAttributeNS(null, "cy", calc(move.from.y));
     toHighlight.setAttributeNS(null, "cx", calc(move.to.x, true));
     toHighlight.setAttributeNS(null, "cy", calc(move.to.y));
+  }
+
+  protected override showAll() {
+    (this.bestmove.from as HTMLElement).style.opacity = "1";
+    (this.bestmove.to as HTMLElement).style.opacity = "1";
+    (this.ponder.from as HTMLElement).style.opacity = "1";
+    (this.ponder.to as HTMLElement).style.opacity = "1";
   }
 }
