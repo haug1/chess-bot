@@ -39,24 +39,14 @@ export abstract class Highlights {
     },
     hide = false
   ) {
-    if (!this.bestmove.from) {
-      this.createAll();
-    }
-
+    if (!this.bestmove.from) this.createAll();
     if (positions) {
-      if (positions.bestmove) {
+      if (positions.bestmove)
         this.updatePosition(this.bestmove, positions.bestmove);
-      }
-      if (positions.ponder) {
-        this.updatePosition(this.ponder, positions.ponder);
-      }
+      if (positions.ponder) this.updatePosition(this.ponder, positions.ponder);
     }
-
-    if (hide) {
-      this.hideAll();
-    } else {
-      this.showAll();
-    }
+    if (hide) this.hideAll();
+    else this.showAll();
   }
 
   private createAll() {
@@ -80,9 +70,7 @@ export abstract class Highlights {
 
   private createHighlight(id: string, color: string) {
     const element = this.createHighlightElement(id, color);
-
     this.mount(element);
-
     return element;
   }
 

@@ -33,19 +33,15 @@ export abstract class StatusContainer {
     container.style.borderStyle = "solid";
     container.style.borderColor = "black";
     container.style.padding = "5px";
-
     const text = document.createElement("span");
     text.id = StatusContainer.ELEMENT_TEXT_ID;
     container.appendChild(text);
-
     const refreshButton = document.createElement("button");
     refreshButton.style.float = "right";
     refreshButton.innerText = "Refresh";
     refreshButton.addEventListener("click", this.onRefreshButtonClicked);
     container.appendChild(refreshButton);
-
     this.mount(container);
-
     return {
       container,
       text,

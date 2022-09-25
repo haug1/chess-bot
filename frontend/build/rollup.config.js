@@ -17,7 +17,7 @@ function createConfig(name) {
       terser(),
       {
         name: "generate-manifest",
-        generateBundle(_, bundle) {
+        generateBundle(_, __) {
           this.emitFile({
             type: "asset",
             fileName: "manifest.json",
