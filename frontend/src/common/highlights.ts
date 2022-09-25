@@ -15,7 +15,7 @@ export abstract class Highlights {
   abstract createHighlightElement(id: string, color: string): Element;
   abstract mount(element: Element): void;
 
-  private bestmove = {
+  protected bestmove = {
     from: document.querySelector<Element>(
       "#" + Highlights.BEST_MOVE_ID + Highlights.FROM_ID
     ),
@@ -23,7 +23,7 @@ export abstract class Highlights {
       "#" + Highlights.BEST_MOVE_ID + Highlights.TO_ID
     ),
   };
-  private ponder = {
+  protected ponder = {
     from: document.querySelector<Element>(
       "#" + Highlights.PONDER_ID + Highlights.FROM_ID
     ),
@@ -32,10 +32,6 @@ export abstract class Highlights {
     ),
   };
 
-  get exists() {
-    return !!this.bestmove.from;
-  }
-
   public update(
     positions?: {
       bestmove?: Move;
@@ -43,7 +39,7 @@ export abstract class Highlights {
     },
     hide = false
   ) {
-    if (!this.exists) {
+    if (!this.bestmove.from) {
       this.createAll();
     }
 
@@ -97,7 +93,7 @@ export abstract class Highlights {
     (this.ponder.to as HTMLElement).style.opacity = "0";
   }
 
-  private showAll() {
+  protected showAll() {
     (this.bestmove.from as HTMLElement).style.opacity = "0.5";
     (this.bestmove.to as HTMLElement).style.opacity = "0.5";
     (this.ponder.from as HTMLElement).style.opacity = "0.5";
