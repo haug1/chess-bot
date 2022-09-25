@@ -1,33 +1,55 @@
 export abstract class StatusContainer {
-  private static readonly ELEMENT_ID = "status-container";
+  private static readonly ELEMENT_CONTAINER_ID = "status-container";
+  private static readonly ELEMENT_TEXT_ID = "status-container--text";
+  private static readonly ELEMENT_BUTTON_ID = "status-container--button";
 
   abstract mount(element: HTMLDivElement): void;
 
-  private element = document.querySelector<HTMLDivElement>(
-    "#" + StatusContainer.ELEMENT_ID
-  );
+  private element = {
+    container: document.querySelector<HTMLDivElement>(
+      "#" + StatusContainer.ELEMENT_CONTAINER_ID
+    ),
+    text: document.querySelector<HTMLSpanElement>(
+      "#" + StatusContainer.ELEMENT_TEXT_ID
+    ),
+    refreshButton: document.querySelector<HTMLButtonElement>(
+      "#" + StatusContainer.ELEMENT_BUTTON_ID
+    ),
+  };
 
-  get exists() {
-    return !!this.element;
-  }
+  public onRefreshButtonClicked: () => void;
 
   public update(msg: string, borderColor = "black", borderWidth = "2px") {
-    if (!this.element) this.element = this.createElement();
-    this.element.style.borderColor = borderColor;
-    this.element.style.borderWidth = borderWidth;
-    this.element.innerText = msg;
+    if (!this.element.container) this.element = this.createElement();
+    this.element.container!.style.borderColor = borderColor;
+    this.element.container!.style.borderWidth = borderWidth;
+    this.element.text!.innerText = msg;
   }
 
   private createElement() {
-    const element = document.createElement("div");
-    element.id = StatusContainer.ELEMENT_ID;
-    element.style.borderWidth = "2px";
-    element.style.borderStyle = "solid";
-    element.style.borderColor = "black";
-    element.style.padding = "5px";
+    const container = document.createElement("div");
+    container.id = StatusContainer.ELEMENT_CONTAINER_ID;
+    container.style.borderWidth = "2px";
+    container.style.borderStyle = "solid";
+    container.style.borderColor = "black";
+    container.style.padding = "5px";
 
-    this.mount(element);
+    const text = document.createElement("span");
+    text.id = StatusContainer.ELEMENT_TEXT_ID;
+    container.appendChild(text);
 
-    return element;
+    const refreshButton = document.createElement("button");
+    refreshButton.style.float = "right";
+    refreshButton.innerText = "Refresh";
+    refreshButton.addEventListener("click", this.onRefreshButtonClicked);
+    container.appendChild(refreshButton);
+
+    this.mount(container);
+
+    return {
+      container,
+      text,
+      refreshButton,
+    };
   }
 }
