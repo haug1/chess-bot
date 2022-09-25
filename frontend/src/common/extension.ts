@@ -50,15 +50,11 @@ export abstract class ChessbotExtension {
       if (!(this.moveCounter % 2)) {
         this.statusContainer.update("Figuring out best move..", "yellow");
         const chess = new Chess();
-
         for (const move of this.scrapeMoves()) chess.move(move);
-
         const stockfishResult = await this.stockfish.getBestMoveBasedOnFEN(
           chess.fen()
         );
-
         this.statusContainer.update(stockfishResult.response, "green", "4px");
-
         if (stockfishResult.moves)
           this.highlights.update(stockfishResult.moves);
       } else {

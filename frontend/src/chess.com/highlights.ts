@@ -4,11 +4,8 @@ import { Move } from "../common/types";
 export class ChessComHighlights extends Highlights {
   mount(element: HTMLElement) {
     const board = document.querySelector("chess-board");
-    if (board) {
-      board.appendChild(element);
-    } else {
-      throw new Error("Board not found");
-    }
+    if (board) board.appendChild(element);
+    else throw new Error("Board not found");
   }
 
   override updatePosition(

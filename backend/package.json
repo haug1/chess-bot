@@ -5,7 +5,8 @@
   "main": "src/main.js",
   "type": "module",
   "scripts": {
-    "start": "ENV=development node src/main.js",
+    "start": "node src/main.js",
+    "dev": "ENV=development node src/main.js",
     "test": "ENV=development node test/test-runner.js",
     "test:http": "bash test/test.sh",
     "postinstall": "cp node_modules/stockfish/src/stockfish.js node_modules/stockfish/src/stockfish.worker.js"

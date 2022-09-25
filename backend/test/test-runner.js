@@ -3,6 +3,11 @@ import * as tests from "./tests/index.js";
 
 // iterates all tests as exported by index.js
 // runs all the functions of each test class
+// following hook functions exist:
+//  - before, runs before each class
+//  - beforeEach, runs before each test function
+//  - after, runs before each class
+//  - afterEach, runs after each test function
 async function main() {
   const suiteTestStart = new Date();
 
@@ -12,7 +17,10 @@ async function main() {
     const classTestStart = new Date();
     const testPrototype = tests[testName].prototype;
     const testFunctions = Object.getOwnPropertyNames(testPrototype).filter(
-      (s) => !["before", "constructor"].includes(s)
+      (s) =>
+        !["before", "beforeEach", "after", "afterEach", "constructor"].includes(
+          s
+        )
     );
 
     typeof testPrototype.before === "function" &&
@@ -20,6 +28,9 @@ async function main() {
 
     for (const funcName of testFunctions) {
       log(`Running test function '${testName}.${funcName}'`);
+
+      typeof testPrototype.beforeEach === "function" &&
+        (await testPrototype.beforeEach());
 
       const functionTestStart = new Date();
       const testResult = await testPrototype[funcName]();
@@ -35,7 +46,12 @@ async function main() {
           `ERROR: ${testName}.${funcName} test assertion failed. ${testResult.expectedResult} is not equal to ${testResult.result}`
         );
       }
+
+      typeof testPrototype.afterEach === "function" &&
+        (await testPrototype.afterEach());
     }
+
+    typeof testPrototype.after === "function" && (await testPrototype.after());
 
     log(`class '${testName}' completed in ${new Date() - classTestStart} ms`);
   }

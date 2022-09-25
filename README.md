@@ -1,18 +1,21 @@
 # chess-bot
 
-Provides stockfish best move analysis during gameplay on `chess.com` with Firefox browser
+Provides stockfish best move analysis during gameplay (vs the computer) on `chess.com` or `lichess` with Firefox browser
+
+Go to [installing/usage](#installing)
 
 # info
 
-Has 2 components:
+The product consists of 2 components:
 
 ## firefox extension (frontend)
 
-- asks the stockfish server based on the FEN string of the current game state whenever a move happens
-- displays the stockfish response on the web page
-- only runs on `https://www.chess.com/play/computer` (see `frontend/manifest.json`)
+- asks the stockfish server for the best move based on the current game state and updates whenever opponent makes a move happens
+- displays the stockfish evaluation on the web page with highlights on the board (chess.com/lichess)
+- click 'refresh' button if the game gets out of sync
+- there are seperate extensions for each platform chess.com and lichess, they only load on these pages respectively: `https://www.chess.com/play/computer`, `https://lichess.org/*`
 
-## local HTTP server for stockfish (backend)
+## local HTTP server for stockfish evaluation as a service (backend, runs on your local computer)
 
 - has a ready stockfish engine and functions for analysing best moves based on FEN string
 - `POST /` endpoint for getting stockfish best move analysis based on chess FEN string
@@ -41,7 +44,7 @@ bestmove e2e4 ponder b8c6
 You need to have these tools:
 
 - git
-- node.js 16
+- node.js 16+
 - firefox
 
 ## installation & usage process
@@ -56,4 +59,5 @@ You need to have these tools:
    2. click `This Firefox`
    3. click `Load Temporary Add-on...`
    4. choose the `frontend/bin/<chess-website>/manifest.json` file
-4. go to [chess.com computer play](https://www.chess.com/play/computer) (refreshing page after game begins may be required)
+4. go to chess.com/lichess and play vs the computer
+5. click 'refresh' if game gets out of sync
