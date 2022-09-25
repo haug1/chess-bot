@@ -13,6 +13,10 @@ export abstract class ChessbotExtension {
   constructor(statusContainer: StatusContainer, highlights: Highlights) {
     this.stockfish = new StockfishClient();
     this.statusContainer = statusContainer;
+    this.statusContainer.onRefreshButtonClicked = () => {
+      this.moveCounter = 0;
+      this.onMove();
+    };
     this.highlights = highlights;
     this.main();
   }
@@ -24,6 +28,7 @@ export abstract class ChessbotExtension {
   private main() {
     const interval = setInterval(() => {
       if (this.isGame()) {
+        console.log("Game started");
         clearInterval(interval);
         this.onMove();
         this.observeMoves();
