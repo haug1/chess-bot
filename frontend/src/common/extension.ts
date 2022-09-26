@@ -28,7 +28,6 @@ export abstract class ChessbotExtension {
   private main() {
     const interval = setInterval(() => {
       if (this.isGame()) {
-        console.log("Game started");
         clearInterval(interval);
         this.onMoveObserved();
         this.observeMoves();
@@ -37,35 +36,29 @@ export abstract class ChessbotExtension {
   }
 
   private observeMoves() {
-    console.info("Start observing for moves");
-    new MutationObserver(() => this.onMoveObserved()).observe(
-      this.movesElement,
-      {
-        childList: true,
-        subtree: true,
-      }
-    );
+    new MutationObserver(() => {
+      this.onMoveObserved();
+    }).observe(this.movesElement, {
+      childList: true,
+      subtree: true,
+    });
   }
 
   private async onMoveObserved() {
+    this.moveCounter++;
     try {
-      // only do it on player's turn (todo(?) this is lazy & error-prone)
-      if (!(this.moveCounter % 2)) {
-        this._stockfish.abort();
-        await this.onPlayerTurn();
-      } else {
-        this.onOpponentTurn();
-      }
+      this._stockfish.abort();
+      if (this.moveCounter % 2) await this.onPlayerTurn();
+      else this.onOpponentTurn();
     } catch (e) {
-      this._statusContainer.update({
-        msg: "ERROR",
-        borderColor: "red",
-        borderWidth: "4px",
-      });
+      if (!e.stale) {
+        this._statusContainer.update({
+          msg: e.aborted ? "ABORTED" : "ERROR",
+          borderColor: e.aborted ? "orange" : "red",
+          borderWidth: "4px",
+        });
+      }
       if (!e.aborted && !e.stale) throw e;
-      else console.log("Aborted request or got stale response", e);
-    } finally {
-      this.moveCounter++;
     }
   }
 
@@ -76,13 +69,13 @@ export abstract class ChessbotExtension {
     });
     const chess = new Chess();
     for (const move of this.scrapeMoves()) chess.move(move);
-
     const stockfishResult = await this._stockfish.getBestMoveBasedOnFEN(
       chess.fen(),
       this.moveCounter
     );
 
-    const stale = this.moveCounter !== stockfishResult.currentMoveCounter;
+    // throw response if stale, i.e. the response was meant for an earlier game state
+    const stale = this.moveCounter !== stockfishResult.refMoveCounter;
     if (stale) throw { stale };
 
     this._statusContainer.update({
@@ -99,6 +92,6 @@ export abstract class ChessbotExtension {
 
   private onOpponentTurn() {
     this._highlights.update({ hide: true });
-    this._statusContainer.update({ msg: "Waiting.." });
+    this._statusContainer.update({ msg: "Waiting for opponent.." });
   }
 }

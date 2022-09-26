@@ -4,7 +4,6 @@ import { ChessComStatusContainer } from "./status-container";
 
 export class ChessComExtension extends ChessbotExtension {
   constructor() {
-    console.log("Chess.com extension loading");
     super(new ChessComStatusContainer(), new ChessComHighlights());
   }
 

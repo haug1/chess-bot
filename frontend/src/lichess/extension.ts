@@ -8,7 +8,6 @@ export class LichessExtension extends ChessbotExtension {
   }
 
   constructor() {
-    console.log("Lichess extension loading");
     super(new LichessStatusContainer(), new LichessHighlights());
   }
 
