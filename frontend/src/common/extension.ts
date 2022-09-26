@@ -51,6 +51,7 @@ export abstract class ChessbotExtension {
     try {
       // only do it on player's turn (todo(?) this is lazy & error-prone)
       if (!(this.moveCounter % 2)) {
+        this._stockfish.abort();
         await this.onPlayerTurn();
       } else {
         this.onOpponentTurn();
@@ -61,7 +62,8 @@ export abstract class ChessbotExtension {
         borderColor: "red",
         borderWidth: "4px",
       });
-      throw e;
+      if (!e.aborted && !e.stale) throw e;
+      else console.log("Aborted request or got stale response", e);
     } finally {
       this.moveCounter++;
     }
@@ -74,9 +76,15 @@ export abstract class ChessbotExtension {
     });
     const chess = new Chess();
     for (const move of this.scrapeMoves()) chess.move(move);
+
     const stockfishResult = await this._stockfish.getBestMoveBasedOnFEN(
-      chess.fen()
+      chess.fen(),
+      this.moveCounter
     );
+
+    const stale = this.moveCounter !== stockfishResult.currentMoveCounter;
+    if (stale) throw { stale };
+
     this._statusContainer.update({
       msg: stockfishResult.response,
       borderColor: "green",
