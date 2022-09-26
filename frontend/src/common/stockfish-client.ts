@@ -4,11 +4,13 @@ export class StockfishClient {
   private abortController?: AbortController;
 
   public abort() {
-    this.abortController?.abort();
+    this.abortController !== undefined &&
+      !this.abortController.signal.aborted &&
+      this.abortController.abort();
     this.abortController = undefined;
   }
 
-  public async getBestMoveBasedOnFEN(fen: string, currentMoveCounter: number) {
+  public async getBestMoveBasedOnFEN(fen: string, refMoveCounter: number) {
     this.abortController = new AbortController();
     try {
       const httpResponse = await fetch("http://localhost:8080", {
@@ -44,7 +46,7 @@ export class StockfishClient {
       return {
         moves,
         response,
-        currentMoveCounter,
+        refMoveCounter,
       };
     } catch (e) {
       if (e.name === "AbortError") throw { aborted: true };
