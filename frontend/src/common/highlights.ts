@@ -1,5 +1,15 @@
 import { Move } from "./types";
 
+type UpdateOptions = {
+  positions?: {
+    bestmove?: Move;
+    ponder?: Move;
+  };
+  hide?: boolean;
+};
+
+type Highlight = { from: Element | null; to: Element | null };
+
 export abstract class Highlights {
   private static readonly BEST_MOVE_ID = "bestmove-highlight";
   private static readonly PONDER_ID = "ponder-highlight";
@@ -7,13 +17,6 @@ export abstract class Highlights {
   private static readonly TO_ID = "-to";
   private static readonly PONDER_HIGHLIGHT_COLOR = "rgb(245, 42, 42)"; // red
   private static readonly BESTMOVE_HIGHLIGHT_COLOR = "rgb(68, 255, 0)"; // green
-
-  abstract updatePosition(
-    highlight: { from: Element | null; to: Element | null },
-    move: Move
-  );
-  abstract createHighlightElement(id: string, color: string): Element;
-  abstract mount(element: Element): void;
 
   protected bestmove = {
     from: document.querySelector<Element>(
@@ -32,21 +35,20 @@ export abstract class Highlights {
     ),
   };
 
-  public update(
-    positions?: {
-      bestmove?: Move;
-      ponder?: Move;
-    },
-    hide = false
-  ) {
+  protected abstract updatePosition(highlight: Highlight, move: Move);
+  protected abstract createHighlightElement(id: string, color: string): Element;
+  protected abstract mount(element: Element): void;
+
+  public update({ positions, hide }: UpdateOptions) {
     if (!this.bestmove.from) this.createAll();
     if (positions) {
       if (positions.bestmove)
         this.updatePosition(this.bestmove, positions.bestmove);
       if (positions.ponder) this.updatePosition(this.ponder, positions.ponder);
     }
-    if (hide) this.hideAll();
-    else this.showAll();
+    if (hide !== undefined)
+      if (hide) this.hideAll();
+      else this.showAll();
   }
 
   private createAll() {

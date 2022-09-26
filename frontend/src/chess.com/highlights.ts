@@ -2,13 +2,13 @@ import { Highlights } from "../common/highlights";
 import { Move } from "../common/types";
 
 export class ChessComHighlights extends Highlights {
-  mount(element: HTMLElement) {
+  protected override mount(element: HTMLElement) {
     const board = document.querySelector("chess-board");
     if (board) board.appendChild(element);
     else throw new Error("Board not found");
   }
 
-  override updatePosition(
+  protected override updatePosition(
     highlight: { from: HTMLElement | null; to: HTMLElement | null },
     { from, to }: Move
   ) {
@@ -16,7 +16,10 @@ export class ChessComHighlights extends Highlights {
     highlight.to!.className = `highlight square-${to.x}${to.y}`;
   }
 
-  override createHighlightElement(id: string, color: string): HTMLElement {
+  protected override createHighlightElement(
+    id: string,
+    color: string
+  ): HTMLElement {
     const element = document.createElement("div");
     element.id = id;
     element.style.backgroundColor = color;
