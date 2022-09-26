@@ -3,7 +3,7 @@ import { LichessHighlights } from "./highlights";
 import { LichessStatusContainer } from "./status-container";
 
 export class LichessExtension extends ChessbotExtension {
-  get observingElement(): Node {
+  protected override get movesElement(): Node {
     return document.querySelector("l4x") as Node;
   }
 
@@ -12,14 +12,14 @@ export class LichessExtension extends ChessbotExtension {
     super(new LichessStatusContainer(), new LichessHighlights());
   }
 
-  scrapeMoves() {
+  protected override scrapeMoves() {
     let moves: string[] = [];
     for (const element of document.querySelectorAll("l4x u8t"))
       if (element.textContent) moves.push(element.textContent);
     return moves;
   }
 
-  isGame(): boolean {
+  protected override isGame(): boolean {
     const gameReadyElement = document.querySelector(
       ".message > div:nth-child(1)"
     );

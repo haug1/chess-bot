@@ -2,7 +2,10 @@ import { Highlights } from "../common/highlights";
 import { Move } from "../common/types";
 
 export class LichessHighlights extends Highlights {
-  createHighlightElement(id: string, color: string): Element {
+  protected override createHighlightElement(
+    id: string,
+    color: string
+  ): Element {
     const element = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "circle"
@@ -18,14 +21,14 @@ export class LichessHighlights extends Highlights {
     return element;
   }
 
-  mount(element: Element): void {
+  protected override mount(element: Element): void {
     const container = document.querySelector("cg-container svg.cg-shapes g");
     if (container) container.appendChild(element);
     else
       throw new Error("Failed to create highlight, mounting point not found");
   }
 
-  updatePosition(
+  protected override updatePosition(
     highlight: { from: Element | null; to: Element | null },
     move: Move
   ) {

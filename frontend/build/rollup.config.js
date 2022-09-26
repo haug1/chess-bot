@@ -37,14 +37,12 @@ function createManifest(name) {
       "A firefox extension that shows the best moves provided by the stockfish backend for games on " +
       name,
     version: "1.0.0",
-
     content_scripts: [
       {
         matches: [urlMatches(name)],
         js: ["index.js"],
       },
     ],
-
     permissions: ["activeTab", "*://localhost/*"],
   };
 }

@@ -1,9 +1,15 @@
+type UpdateOptions = {
+  msg: string;
+  borderColor?: string;
+  borderWidth?: string;
+};
+
 export abstract class StatusContainer {
   private static readonly ELEMENT_CONTAINER_ID = "status-container";
   private static readonly ELEMENT_TEXT_ID = "status-container--text";
   private static readonly ELEMENT_BUTTON_ID = "status-container--button";
 
-  abstract mount(element: HTMLDivElement): void;
+  public onRefreshButtonClicked: () => void;
 
   private element = {
     container: document.querySelector<HTMLDivElement>(
@@ -17,9 +23,13 @@ export abstract class StatusContainer {
     ),
   };
 
-  public onRefreshButtonClicked: () => void;
+  protected abstract mount(element: HTMLDivElement): void;
 
-  public update(msg: string, borderColor = "black", borderWidth = "2px") {
+  public update({
+    msg,
+    borderColor = "black",
+    borderWidth = "2px",
+  }: UpdateOptions) {
     if (!this.element.container) this.element = this.createElement();
     this.element.container!.style.borderColor = borderColor;
     this.element.container!.style.borderWidth = borderWidth;

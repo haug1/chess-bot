@@ -1,7 +1,7 @@
 import { StatusContainer } from "../common/status-container";
 
 export class ChessComStatusContainer extends StatusContainer {
-  mount(element: HTMLDivElement) {
+  protected override mount(element: HTMLDivElement) {
     const container = document.querySelector(".play-controller-message");
     if (container) container.insertBefore(element, container.firstChild);
     else
