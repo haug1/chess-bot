@@ -1,26 +1,29 @@
 {
-  "name": "ts-rewrite",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "chess-bot-extension",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "npm run build && npm run move",
-    "build": "rollup -c build/rollup.config.js",
-    "move": "rm -rf /mnt/c/Users/Desktop/frontend && cp -r bin/* /mnt/c/Users/lars-/Desktop/frontend"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "move": "rm -rf /mnt/c/Users/Desktop/frontend && cp -r bin/* /mnt/c/Users/lars-/Desktop/frontend",
+    "deploy": "npm run build && npm run move"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "chess.js": "^1.0.0-alpha.0"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^22.0.2",
-    "@rollup/plugin-node-resolve": "^14.1.0",
-    "@rollup/plugin-typescript": "^8.5.0",
-    "rollup": "^2.79.1",
-    "rollup-plugin-terser": "^7.0.2",
+    "@sveltejs/vite-plugin-svelte": "^1.0.2",
+    "@tsconfig/svelte": "^3.0.0",
+    "prettier": "^2.7.1",
+    "prettier-plugin-svelte": "^2.7.1",
+    "svelte": "^3.49.0",
+    "svelte-check": "^2.8.1",
+    "svelte-preprocess": "^4.10.7",
     "tslib": "^2.4.0",
-    "typescript": "^4.8.3"
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0"
   }
 }

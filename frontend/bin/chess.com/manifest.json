@@ -1,1 +1,0 @@
-{"manifest_version":2,"name":"chess.com bot","description":"A firefox extension that shows the best moves provided by the stockfish backend for games on chess.com","version":"1.0.0","content_scripts":[{"matches":["https://www.chess.com/play/computer"],"js":["index.js"]}],"permissions":["activeTab","*://localhost/*"]}

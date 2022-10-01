@@ -1,1 +1,0 @@
-{"manifest_version":2,"name":"lichess bot","description":"A firefox extension that shows the best moves provided by the stockfish backend for games on lichess","version":"1.0.0","content_scripts":[{"matches":["https://lichess.org/*"],"js":["index.js"]}],"permissions":["activeTab","*://localhost/*"]}
