@@ -1,0 +1,1 @@
+{"manifest_version":2,"name":"Chess bot","description":"A browser extension that shows the best moves provided by the stockfish backend for games on lichess/chess.com","version":"1.0.0","content_scripts":[{"matches":["https://www.chess.com/*","https://lichess.org/*"],"js":["chess-bot.iife.js"],"css":["style.css"]}],"permissions":["activeTab","*://localhost/*"]}
