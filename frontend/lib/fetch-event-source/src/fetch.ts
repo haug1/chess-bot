@@ -150,7 +150,7 @@ export function fetchEventSource(
             dispose();
             reject(innerErr);
           }
-        } else throw { aborted: true };
+        } else reject({ aborted: true });
       }
     }
 
