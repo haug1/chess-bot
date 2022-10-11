@@ -1,4 +1,5 @@
-import { log } from "../src/logger.js";
+import { expect } from "chai";
+import { error, log } from "../src/logger.js";
 import * as tests from "./tests/index.js";
 
 // iterates all tests as exported by index.js
@@ -11,11 +12,12 @@ import * as tests from "./tests/index.js";
 async function main() {
   const suiteTestStart = new Date();
 
-  for (const testName of Object.keys(tests)) {
-    log("Running test class " + testName);
+  const testClassNames = Object.keys(tests);
+  for (const testClassName of testClassNames) {
+    log("Running test class " + testClassName);
 
     const classTestStart = new Date();
-    const testPrototype = tests[testName].prototype;
+    const testPrototype = tests[testClassName].prototype;
     const testFunctions = Object.getOwnPropertyNames(testPrototype).filter(
       (s) =>
         !["before", "beforeEach", "after", "afterEach", "constructor"].includes(
@@ -27,24 +29,33 @@ async function main() {
       (await testPrototype.before());
 
     for (const funcName of testFunctions) {
-      log(`Running test function '${testName}.${funcName}'`);
+      log(`Running test function '${testClassName}.${funcName}'`);
 
       typeof testPrototype.beforeEach === "function" &&
         (await testPrototype.beforeEach());
 
       const functionTestStart = new Date();
       const testResult = await testPrototype[funcName]();
-
-      if (testResult.expectedResult === testResult.result) {
+      try {
+        expect(testResult.expectedResult).eql(testResult.result);
         log(
-          `test '${testName}.${funcName}' completed in ${
+          `test '${testClassName}.${funcName}' completed in ${
             new Date() - functionTestStart
           } ms`
         );
-      } else {
-        throw new Error(
-          `ERROR: ${testName}.${funcName} test assertion failed. ${testResult.expectedResult} is not equal to ${testResult.result}`
-        );
+      } catch (e) {
+        if (e.name === "AssertionError") {
+          error(
+            `ERROR: ${testClassName}.${funcName} test assertion failed. ${testResult.expectedResult} is not equal to ${testResult.result}`
+          );
+          error({
+            expected: e.actual,
+            actual: e.expected,
+          });
+          process.exit(1);
+        } else {
+          throw e;
+        }
       }
 
       typeof testPrototype.afterEach === "function" &&
@@ -53,7 +64,9 @@ async function main() {
 
     typeof testPrototype.after === "function" && (await testPrototype.after());
 
-    log(`class '${testName}' completed in ${new Date() - classTestStart} ms`);
+    log(
+      `class '${testClassName}' completed in ${new Date() - classTestStart} ms`
+    );
   }
 
   log(`test suite completed in ${new Date() - suiteTestStart} ms`);

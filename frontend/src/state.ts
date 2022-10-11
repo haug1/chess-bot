@@ -20,9 +20,8 @@ export enum States {
   WAITING_FOR_PLAYER, // waiting for player to make a move (stockfish response ok)
 }
 
-export const moveCounter = writable(0);
-export const suggestedBestMove = writable<Move>(undefined);
-export const suggestedPonder = writable<Move>(undefined);
-export const hideHighlights = writable(false);
+export const score = writable("");
+export const suggestedFriendlyMoves = writable<Move[]>([]);
+export const suggestedEnemyMoves = writable<Move[]>([]);
 export const stockfishResponse = writable("");
 export const state = writable(States.WAITING_FOR_GAME);

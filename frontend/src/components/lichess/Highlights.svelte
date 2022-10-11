@@ -1,6 +1,16 @@
 <script lang="ts">
   import Highlight from "./Highlight.svelte";
-  import { suggestedBestMove, suggestedPonder, type Move } from "../../state";
+  import {
+    state,
+    States,
+    suggestedEnemyMoves,
+    suggestedFriendlyMoves,
+    type Move,
+  } from "../../state";
+  import {
+    getEnemyMoveColor,
+    getFriendlyMoveColor,
+  } from "../common/highlight-colors";
 
   function calculate(pos: number, isBlack: boolean, isX = false) {
     const position = parseInt(pos.toString());
@@ -11,7 +21,6 @@
   }
 
   function calculatePoints(move: Move): Move {
-    if (!move) return undefined;
     const isBlack = document
       .querySelector("coords.files")!
       .classList.contains("black");
@@ -27,15 +36,36 @@
     };
   }
 
-  $: bestmove = calculatePoints($suggestedBestMove);
-  $: ponder = calculatePoints($suggestedPonder);
+  $: friendlyMoves = $suggestedFriendlyMoves.map((m) => calculatePoints(m));
+  $: enemyMoves = $suggestedEnemyMoves.map((m) => calculatePoints(m));
+  $: showHighlights =
+    $state === States.WAITING_FOR_PLAYER ||
+    $state === States.WAITING_FOR_STOCKFISH;
 </script>
 
-{#if bestmove}
-  <Highlight color="green" cx={bestmove.from.x} cy={bestmove.from.y} />
-  <Highlight color="green" cx={bestmove.to.x} cy={bestmove.to.y} />
-{/if}
-{#if ponder}
-  <Highlight color="red" cx={ponder.from.x} cy={ponder.from.y} />
-  <Highlight color="red" cx={ponder.to.x} cy={ponder.to.y} />
+{#if showHighlights}
+  {#each friendlyMoves as move, i}
+    <Highlight
+      color={getFriendlyMoveColor(i, $state)}
+      x={move.from.x}
+      y={move.from.y}
+    />
+    <Highlight
+      color={getFriendlyMoveColor(i, $state)}
+      x={move.to.x}
+      y={move.to.y}
+    />
+  {/each}
+  {#each enemyMoves as move, i}
+    <Highlight
+      color={getEnemyMoveColor(i, $state)}
+      x={move.from.x}
+      y={move.from.y}
+    />
+    <Highlight
+      color={getEnemyMoveColor(i, $state)}
+      x={move.to.x}
+      y={move.to.y}
+    />
+  {/each}
 {/if}

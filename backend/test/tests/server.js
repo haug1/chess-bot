@@ -1,5 +1,5 @@
 import { startServer } from "../../src/server.js";
-import { initializeStockfish } from "../../src/stockfish.js";
+import { initializeStockfish } from "../../src/stockfish/stockfish.js";
 import { post } from "../utils/http.js";
 
 const FEN = "rnbqkbnr/pp1ppppp/8/2p5/8/3P4/PPP1PPPP/RNBQKBNR w KQkq c6 0 2";
@@ -12,8 +12,20 @@ export class ServerTests {
 
   async test_200ExpectedResponseWhenRequestOk() {
     return {
-      result: await post("http://localhost:8080/", FEN, "text/plain"),
-      expectedResult: "bestmove e2e4 ponder b8c6",
+      result: JSON.parse(
+        await post(
+          "http://localhost:8080/",
+          JSON.stringify({ moves: [] }),
+          "application/json"
+        )
+      ),
+      expectedResult: {
+        moves: {
+          bestmove: { from: { x: 5, y: "2" }, to: { x: 5, y: "4" } },
+          ponder: { from: { x: 5, y: "7" }, to: { x: 5, y: "5" } },
+        },
+        raw: "bestmove e2e4 ponder e7e5",
+      },
     };
   }
 

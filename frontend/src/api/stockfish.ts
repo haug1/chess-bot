@@ -1,12 +1,25 @@
+import { fetchEventSource } from "fetch-event-source";
 import type { Move } from "../state";
 
-export type StockfishResult = {
-  moves: {
-    bestmove?: Move;
-    ponder?: Move;
-  };
-  response: string;
+export type StockfishResponse = {
+  bestmove?: BestMove;
+  evaluation?: Evaluation;
+  score?: string;
+  raw: string;
+};
+
+export type Evaluation = {
+  friendly: Move;
+  enemy?: Move;
+};
+
+export type StockfishResult = StockfishResponse & {
   refMoveCounter: number;
+};
+
+export type BestMove = {
+  bestmove?: Move;
+  ponder?: Move;
 };
 
 export class StockfishClient {
@@ -19,44 +32,59 @@ export class StockfishClient {
     this.abortController = undefined;
   }
 
-  public async getBestMoveBasedOnFEN(fen: string, refMoveCounter: number) {
+  getEvaluation(
+    moves: string[],
+    refMoveCounter: number,
+    onEvaluation: (evaluation: StockfishResult) => void
+  ): Promise<void> {
+    this.abortController = new AbortController();
+    const signal = this.abortController.signal;
+    return new Promise(async (resolve, reject) => {
+      try {
+        await fetchEventSource("http://localhost:8080/moves/sse", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ moves }),
+          signal,
+          onmessage(msg) {
+            const stockfishResult: StockfishResult = JSON.parse(msg.data);
+            onEvaluation({ ...stockfishResult, refMoveCounter });
+          },
+          onclose() {
+            if (signal.aborted) {
+              reject({ aborted: true });
+            }
+            resolve();
+          },
+          onerror(err) {
+            reject(err);
+          },
+        });
+      } catch (e) {
+        console.log(e);
+        reject(e);
+      }
+    });
+  }
+
+  /** retired */
+  public async getBestMoveBasedOnFEN(
+    moves: string[],
+    refMoveCounter: number
+  ): Promise<StockfishResult> {
     this.abortController = new AbortController();
     try {
-      const httpResponse = await fetch("http://localhost:8080", {
+      const response = await fetch("http://localhost:8080/moves", {
         method: "POST",
         headers: {
-          "Content-Type": "text/plain",
+          "Content-Type": "application/json",
         },
-        body: fen,
+        body: JSON.stringify({ moves }),
         signal: this.abortController.signal,
       });
-      const response = await httpResponse.text();
-      let moves: {
-        bestmove?: Move;
-        ponder?: Move;
-      } = {};
-      if (response.includes("bestmove")) {
-        const LOOKUP = ["a", "b", "c", "d", "e", "f", "g", "h"];
-        const createXY = (boardPosition) => ({
-          x: LOOKUP.indexOf(boardPosition[0]) + 1,
-          y: boardPosition[1],
-        });
-        const createMove = (move) => ({
-          from: createXY(move.substr(0, 2)),
-          to: createXY(move.substr(2)),
-        });
-        const bestmove = response.substr(9, 4); // i.e. e2e4
-        const ponder = response.substr(21); // i.e. e2e4 or empty string
-        moves = {
-          ...(bestmove && { bestmove: createMove(bestmove) }),
-          ...(ponder && { ponder: createMove(ponder) }),
-        };
-      }
-      return {
-        moves,
-        response,
-        refMoveCounter,
-      };
+      return { ...(await response.json()), refMoveCounter };
     } catch (e) {
       if (e.name === "AbortError") throw { aborted: true };
       else throw e;

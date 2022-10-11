@@ -1,8 +1,8 @@
 <script lang="ts">
   import { engine } from "../../engine";
-  import { moveCounter, States, state, stockfishResponse } from "../../state";
+  import { States, state, stockfishResponse, score } from "../../state";
 
-  function getBorderWidth(state) {
+  function getBorderWidth(state: States) {
     switch (state) {
       case States.ERROR:
       case States.WAITING_FOR_PLAYER:
@@ -12,7 +12,7 @@
     }
   }
 
-  function getBorderColor(state) {
+  function getBorderColor(state: States) {
     switch (state) {
       case States.ERROR:
         return "red";
@@ -20,12 +20,14 @@
         return "orange";
       case States.WAITING_FOR_STOCKFISH:
         return "yellow";
+      case States.WAITING_FOR_PLAYER:
+        return "green";
       default:
         return "black";
     }
   }
 
-  function getText(state) {
+  function getText(state: States, stockfishResponse: string) {
     switch (state) {
       case States.ERROR:
         return "ERROR";
@@ -34,17 +36,15 @@
       case States.WAITING_FOR_OPPONENT:
         return "Waiting for opponent..";
       case States.WAITING_FOR_STOCKFISH:
-        return "Waiting for stockfish..";
       case States.WAITING_FOR_PLAYER:
-        return $stockfishResponse;
+        return stockfishResponse;
       default:
         return "";
     }
   }
 
   function onRefreshClicked() {
-    $moveCounter = 0;
-    engine.onMoveObserved();
+    engine.resync();
   }
 
   $: styles = {
@@ -54,22 +54,30 @@
   $: style = Object.keys(styles)
     .map((k) => `--${k}:${styles[k]}`)
     .join(";");
-  $: text = getText($state);
+  $: text = getText($state, $stockfishResponse);
 </script>
 
 <div {style}>
-  {#if style}
-    <span>{text}</span>
-  {/if}
+  <span>{$score}</span>
+  <span>{text}</span>
   <button on:click={onRefreshClicked}>Refresh</button>
 </div>
 
 <style>
   div {
+    display: flex;
+    flex-direction: column;
     border-width: var(--border-width);
     border-color: var(--border-color);
     border-style: solid;
     padding: 5px;
+    width: 100%;
+    height: 100%;
+    font-size: 20px;
+  }
+
+  div > * {
+    margin: 0.5rem 0;
   }
 
   div button {
