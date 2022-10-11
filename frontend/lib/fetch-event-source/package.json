@@ -14,7 +14,7 @@
   "types": "lib/cjs/index.d.ts",
   "sideEffects": false,
   "scripts": {
-    "clean": "rimraf ./lib ./coverage",
+    "clean": "rimraf ./bin ./coverage",
     "prebuild": "npm run clean",
     "build": "tsc && tsc -p tsconfig.esm.json",
     "test": "nyc jasmine --config=jasmine.json",

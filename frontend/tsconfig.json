@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src"]
+      "@/*": ["./src"],
+      "fetch-event-source": ["./lib/fetch-event-source/bin/esm"]
     },
     "target": "ESNext",
     "useDefineForClassFields": true,

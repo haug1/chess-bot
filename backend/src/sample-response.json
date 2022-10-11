@@ -1,0 +1,99 @@
+[
+  {
+    "evaluation": { "from": { "x": 5, "y": "2" }, "to": { "x": 5, "y": "3" } },
+    "raw": "e2e3",
+    "score": "0.99"
+  },
+  {
+    "evaluation": { "from": { "x": 5, "y": "2" }, "to": { "x": 5, "y": "3" } },
+    "raw": "e2e3",
+    "score": "0.92"
+  },
+  {
+    "evaluation": { "from": { "x": 5, "y": "2" }, "to": { "x": 5, "y": "3" } },
+    "raw": "e2e3",
+    "score": "1.27"
+  },
+  {
+    "evaluation": { "from": { "x": 2, "y": "1" }, "to": { "x": 3, "y": "3" } },
+    "raw": "b1c3",
+    "score": "0.92"
+  },
+  {
+    "evaluation": { "from": { "x": 2, "y": "1" }, "to": { "x": 3, "y": "3" } },
+    "raw": "b1c3",
+    "score": "0.42"
+  },
+  {
+    "evaluation": { "from": { "x": 4, "y": "2" }, "to": { "x": 4, "y": "4" } },
+    "raw": "d2d4",
+    "score": "0.91"
+  },
+  {
+    "evaluation": { "from": { "x": 5, "y": "2" }, "to": { "x": 5, "y": "3" } },
+    "raw": "e2e3",
+    "score": "0.84"
+  },
+  {
+    "evaluation": { "from": { "x": 4, "y": "2" }, "to": { "x": 4, "y": "4" } },
+    "raw": "d2d4",
+    "score": "0.56"
+  },
+  {
+    "evaluation": { "from": { "x": 4, "y": "2" }, "to": { "x": 4, "y": "4" } },
+    "raw": "d2d4",
+    "score": "0.55"
+  },
+  {
+    "evaluation": { "from": { "x": 4, "y": "2" }, "to": { "x": 4, "y": "4" } },
+    "raw": "d2d4",
+    "score": "0.53"
+  },
+  {
+    "evaluation": { "from": { "x": 4, "y": "2" }, "to": { "x": 4, "y": "4" } },
+    "raw": "d2d4",
+    "score": "0.56"
+  },
+  {
+    "evaluation": { "from": { "x": 4, "y": "2" }, "to": { "x": 4, "y": "4" } },
+    "raw": "d2d4",
+    "score": "0.56"
+  },
+  {
+    "evaluation": { "from": { "x": 4, "y": "2" }, "to": { "x": 4, "y": "4" } },
+    "raw": "d2d4",
+    "score": "0.49"
+  },
+  {
+    "evaluation": { "from": { "x": 5, "y": "2" }, "to": { "x": 5, "y": "4" } },
+    "raw": "e2e4",
+    "score": "0.49"
+  },
+  {
+    "evaluation": { "from": { "x": 5, "y": "2" }, "to": { "x": 5, "y": "4" } },
+    "raw": "e2e4",
+    "score": "0.48"
+  },
+  {
+    "evaluation": { "from": { "x": 5, "y": "2" }, "to": { "x": 5, "y": "4" } },
+    "raw": "e2e4",
+    "score": "0.63"
+  },
+  {
+    "evaluation": { "from": { "x": 5, "y": "2" }, "to": { "x": 5, "y": "4" } },
+    "raw": "e2e4",
+    "score": "0.56"
+  },
+  {
+    "evaluation": { "from": { "x": 5, "y": "2" }, "to": { "x": 5, "y": "4" } },
+    "raw": "e2e4",
+    "score": "0.56"
+  },
+  {
+    "bestmove": {
+      "bestmove": { "from": { "x": 5, "y": "2" }, "to": { "x": 5, "y": "4" } },
+      "ponder": { "from": { "x": 5, "y": "7" }, "to": { "x": 5, "y": "5" } }
+    },
+    "raw": "bestmove e2e4 ponder e7e5"
+  }
+]

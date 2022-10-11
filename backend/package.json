@@ -7,15 +7,18 @@
   "scripts": {
     "start": "node src/main.js",
     "dev": "ENV=development node src/main.js",
+    "debug": "DEBUG=1 ENV=development node src/main.js",
     "test": "ENV=development node test/test-runner.js",
     "test:http": "bash test/test.sh",
     "postinstall": "cp node_modules/stockfish/src/stockfish.js node_modules/stockfish/src/stockfish.worker.js"
   },
   "dependencies": {
+    "chess.js": "^1.0.0-alpha.0",
     "fastify": "^4.5.3",
     "stockfish": "^15.0.0"
   },
   "devDependencies": {
+    "chai": "^4.3.6",
     "pino-pretty": "^9.1.0"
   },
   "keywords": [

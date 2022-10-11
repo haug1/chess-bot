@@ -1,19 +1,32 @@
 import LichessHighlights from "../components/lichess/Highlights.svelte";
-import LichessStatus from "../components/common/Status.svelte";
 import { ChessBotEngine } from "./base";
+
+function createSvg() {
+  // <svg x="-4" y="-4" viewBox="-4 -4 8 8">
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("x", "-4");
+  svg.setAttribute("y", "-4");
+  svg.setAttribute("viewBox", "-4 -4 8 8");
+  svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
+  return svg;
+}
 
 export class LichessEngine extends ChessBotEngine {
   public Highlights = LichessHighlights;
-  public Status = LichessStatus;
 
   protected get highlightsTarget(): Element {
     const target = document.querySelector("cg-container svg.cg-shapes g");
     if (!target) throw new Error("Highlights target not found");
+    // const svg = createSvg();
+    // target.appendChild(svg);
+    // return svg;
     return target;
   }
 
   protected get movesContainer(): Element {
-    return document.querySelector("l4x");
+    const container = document.querySelector("l4x");
+    if (!container) throw new Error("Moves container not found");
+    return container;
   }
 
   protected get statusTarget(): Element {

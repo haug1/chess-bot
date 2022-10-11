@@ -9,10 +9,8 @@
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "move": "rm -rf /mnt/c/Users/Desktop/frontend && cp -r bin/* /mnt/c/Users/lars-/Desktop/frontend",
-    "deploy": "npm run build && npm run move"
-  },
-  "dependencies": {
-    "chess.js": "^1.0.0-alpha.0"
+    "deploy": "npm run build && npm run move",
+    "test": "jest"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.2",
@@ -25,5 +23,8 @@
     "tslib": "^2.4.0",
     "typescript": "^4.6.4",
     "vite": "^3.1.0"
+  },
+  "dependencies": {
+    "@microsoft/fetch-event-source": "^2.0.1"
   }
 }

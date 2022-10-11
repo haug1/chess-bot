@@ -42,7 +42,7 @@ function fetchEventSource(input, _a) {
         }
         inputSignal === null || inputSignal === void 0 ? void 0 : inputSignal.addEventListener("abort", () => {
             dispose();
-            resolve();
+            reject({ aborted: true });
         });
         const fetch = inputFetch !== null && inputFetch !== void 0 ? inputFetch : window.fetch;
         const onopen = inputOnOpen !== null && inputOnOpen !== void 0 ? inputOnOpen : defaultOnOpen;

@@ -1,10 +1,8 @@
 import ChessComHighlights from "../components/chess.com/Highlights.svelte";
-import ChessComStatus from "../components/common/Status.svelte";
 import { ChessBotEngine } from "./base";
 
 export class ChessComEngine extends ChessBotEngine {
   public Highlights = ChessComHighlights;
-  public Status = ChessComStatus;
 
   protected get highlightsTarget(): Element {
     const target = document.querySelector("chess-board");
@@ -13,13 +11,17 @@ export class ChessComEngine extends ChessBotEngine {
   }
 
   protected get movesContainer(): Element {
-    return document.querySelector("vertical-move-list");
+    const container = document.querySelector("vertical-move-list");
+    if (!container) throw new Error("Moves container not found");
+    return container;
   }
 
   protected get statusTarget(): Element {
     const target = document.querySelector(".play-controller-message");
     if (!target) throw new Error("Status target not found");
-    return target;
+    const statusContainer = document.createElement("div");
+    target.insertBefore(statusContainer, target.firstChild);
+    return statusContainer;
   }
 
   public isGame(): boolean {
