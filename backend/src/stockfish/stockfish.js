@@ -8,14 +8,11 @@ let engine,
 
 export async function initializeStockfish() {
   if (engine) return;
-
   log("Initializing engine..");
-
   engine = await stockfish()();
   engine.addMessageListener((msg) => {
     debug(msg);
   });
-
   return new Promise((resolve) => {
     const messageHandler = (msg) => {
       if (msg === "uciok") {
