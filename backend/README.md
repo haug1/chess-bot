@@ -24,3 +24,4 @@ PS: Not meant for being consumed by more than one person at a time
 
 - implement client here
 - typescript rewrite
+- improving test coverage

@@ -9,6 +9,7 @@ PS: because we are building strictly for running as a browser extension on chess
 
 - unpin fetch-event-source dependency
   - use npm package instead. now that we no longer need the custom edit making signal abort throw custom error, i think it's safe to use their original code
+- add unit testing
 
 # Svelte + TS + Vite
 
