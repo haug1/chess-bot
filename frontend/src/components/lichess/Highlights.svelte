@@ -2,7 +2,6 @@
   import Highlight from "./Highlight.svelte";
   import {
     state,
-    States,
     suggestedEnemyMoves,
     suggestedFriendlyMoves,
     type Move,
@@ -38,34 +37,25 @@
 
   $: friendlyMoves = $suggestedFriendlyMoves.map((m) => calculatePoints(m));
   $: enemyMoves = $suggestedEnemyMoves.map((m) => calculatePoints(m));
-  $: showHighlights =
-    $state === States.WAITING_FOR_PLAYER ||
-    $state === States.WAITING_FOR_STOCKFISH;
 </script>
 
-{#if showHighlights}
-  {#each friendlyMoves as move, i}
-    <Highlight
-      color={getFriendlyMoveColor(i, $state)}
-      x={move.from.x}
-      y={move.from.y}
-    />
-    <Highlight
-      color={getFriendlyMoveColor(i, $state)}
-      x={move.to.x}
-      y={move.to.y}
-    />
-  {/each}
-  {#each enemyMoves as move, i}
-    <Highlight
-      color={getEnemyMoveColor(i, $state)}
-      x={move.from.x}
-      y={move.from.y}
-    />
-    <Highlight
-      color={getEnemyMoveColor(i, $state)}
-      x={move.to.x}
-      y={move.to.y}
-    />
-  {/each}
-{/if}
+{#each friendlyMoves as move, i}
+  <Highlight
+    color={getFriendlyMoveColor(i, $state)}
+    x={move.from.x}
+    y={move.from.y}
+  />
+  <Highlight
+    color={getFriendlyMoveColor(i, $state)}
+    x={move.to.x}
+    y={move.to.y}
+  />
+{/each}
+{#each enemyMoves as move, i}
+  <Highlight
+    color={getEnemyMoveColor(i, $state)}
+    x={move.from.x}
+    y={move.from.y}
+  />
+  <Highlight color={getEnemyMoveColor(i, $state)} x={move.to.x} y={move.to.y} />
+{/each}
