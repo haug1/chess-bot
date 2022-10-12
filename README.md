@@ -68,8 +68,9 @@ You need to have these tools:
 
 - sometimes games on lichess get a bug where UI freezes on opponent turn
   - workaround: refresh page
-- sometimes the backend will throw error parsing moves (known to occur on lichess)
-  - workaround: restart server
-  - observation: happens regularly on last move (when there's a mate in 1) and seemingly also when stockfish gives `bestmove` without `ponder`
+  - hypothesis: occurs when player right-clicks the board. causes exception in lichess source code.
+  - attempted fix: wrap lichess highlights inside svg(inside lichess' svg), but resulted in lichess source code removing the highlights UI
+  - fix idea: there is another svg graphics element that possibly can be used as the container for our highlights
 - not able to observe moves when starting as white (lichess)
   - workaround: click 'Refresh' button
+  - hypothesis: happens because the move container re-mounts after first move is made
