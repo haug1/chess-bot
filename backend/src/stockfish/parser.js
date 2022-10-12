@@ -29,12 +29,11 @@ export function parseStockfishMessage(msg) {
   if (msg.includes(EVALUATION_MATCHER)) {
     const index = msg.indexOf(EVALUATION_MATCHER);
     const moves = msg.substr(index + EVALUATION_MATCHER.length);
-    const matches = /(.\d.\d).*(.\d.\d).*/.exec(moves);
+    const matches = /(.\d.\d)(?: )?(.\d.\d)?/.exec(moves);
     evaluation = createEvalMove(matches[1], matches[2]);
   } else if (msg.includes(BESTMOVE_MATCHER)) {
-    const [_, bestMove, ponder] = /bestmove (.\d.\d).*ponder (.\d.\d).*/.exec(
-      msg
-    );
+    const [_, bestMove, ponder] =
+      /bestmove ([a-z]\d[a-z]\d)(?: ponder )?([a-z]\d[a-z]\d)?/.exec(msg);
     bestmove = createBestMove(bestMove, ponder);
   } else if (msg.includes("pthread sent an error")) {
     throw new Error(msg);
