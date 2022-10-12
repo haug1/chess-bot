@@ -48,14 +48,12 @@ export abstract class ChessBotEngine implements IChessBotEngine {
   private enemyMoves: Move[];
 
   constructor() {
-    suggestedFriendlyMoves.subscribe((friendlyMoves) => {
-      console.log({ friendlyMoves });
-      this.friendlyMoves = friendlyMoves;
-    });
-    suggestedEnemyMoves.subscribe((enemyMoves) => {
-      console.log({ enemyMoves });
-      this.enemyMoves = enemyMoves;
-    });
+    suggestedFriendlyMoves.subscribe(
+      (friendlyMoves) => (this.friendlyMoves = friendlyMoves)
+    );
+    suggestedEnemyMoves.subscribe(
+      (enemyMoves) => (this.enemyMoves = enemyMoves)
+    );
   }
 
   public mount() {
@@ -91,8 +89,7 @@ export abstract class ChessBotEngine implements IChessBotEngine {
       suggestedFriendlyMoves.set([]);
       suggestedEnemyMoves.set([]);
       this._stockfish.abort();
-      if (this.moveCounter % 2) await this.onPlayerTurn();
-      else await this.onOpponentTurn();
+      await this.handleTurn(this.moveCounter % 2 !== 0);
     } catch (e) {
       state.set(States.ERROR);
       throw e;
@@ -109,7 +106,18 @@ export abstract class ChessBotEngine implements IChessBotEngine {
     });
   }
 
-  private async onPlayerTurn() {
+  private addTopMove(
+    movesStore: Writable<Move[]>,
+    move: Move,
+    cachedMoves: Move[]
+  ) {
+    movesStore.set([
+      move,
+      ...cachedMoves.filter(getUniqueMoves(move)).slice(0, 1),
+    ]);
+  }
+
+  private async handleTurn(isPlayerTurn: boolean) {
     state.set(States.WAITING_FOR_STOCKFISH);
     try {
       await this._stockfish.getEvaluation(
@@ -123,28 +131,45 @@ export abstract class ChessBotEngine implements IChessBotEngine {
           stockfishResponse.set(stockfishResult.raw);
 
           if (stockfishResult.bestmove) {
-            this.addTopMove(
-              suggestedFriendlyMoves,
-              stockfishResult.bestmove.bestmove,
-              this.friendlyMoves
-            );
-            this.addTopMove(
-              suggestedEnemyMoves,
-              stockfishResult.bestmove.ponder,
-              this.enemyMoves
-            );
+            const playerMove = isPlayerTurn
+              ? stockfishResult.bestmove.bestmove
+              : stockfishResult.bestmove.ponder;
+            const opponentMove = isPlayerTurn
+              ? stockfishResult.bestmove.ponder
+              : stockfishResult.bestmove.bestmove;
+
+            if (playerMove)
+              this.addTopMove(
+                suggestedFriendlyMoves,
+                playerMove,
+                this.friendlyMoves
+              );
+            if (opponentMove)
+              this.addTopMove(
+                suggestedEnemyMoves,
+                opponentMove,
+                this.enemyMoves
+              );
           }
 
           if (stockfishResult.evaluation) {
-            this.addTopMove(
-              suggestedFriendlyMoves,
-              stockfishResult.evaluation.friendly,
-              this.friendlyMoves
-            );
-            if (stockfishResult.evaluation.enemy)
+            const playerMove = isPlayerTurn
+              ? stockfishResult.evaluation.friendly
+              : stockfishResult.evaluation.enemy;
+            const opponentMove = isPlayerTurn
+              ? stockfishResult.evaluation.enemy
+              : stockfishResult.evaluation.friendly;
+
+            if (playerMove)
+              this.addTopMove(
+                suggestedFriendlyMoves,
+                playerMove,
+                this.friendlyMoves
+              );
+            if (opponentMove)
               this.addTopMove(
                 suggestedEnemyMoves,
-                stockfishResult.evaluation.enemy,
+                opponentMove,
                 this.enemyMoves
               );
           }
@@ -152,28 +177,18 @@ export abstract class ChessBotEngine implements IChessBotEngine {
           if (stockfishResult.score) score.set(stockfishResult.score);
         }
       );
-      state.set(States.WAITING_FOR_PLAYER);
+
+      if (isPlayerTurn) {
+        state.set(States.WAITING_FOR_PLAYER);
+      } else {
+        state.set(States.WAITING_FOR_OPPONENT);
+      }
     } catch (e) {
       if (e.stale || e.aborted) {
-        state.set(States.ABORTED);
-        this._stockfish.abort();
+        //   state.set(States.ABORTED);
+        //   this._stockfish.abort();
       } else throw e;
     }
-  }
-
-  private addTopMove(
-    movesStore: Writable<Move[]>,
-    move: Move,
-    cachedMoves: Move[]
-  ) {
-    movesStore.set([
-      move,
-      ...cachedMoves.filter(getUniqueMoves(move)).slice(0, 1),
-    ]);
-  }
-
-  private async onOpponentTurn() {
-    state.set(States.WAITING_FOR_OPPONENT);
   }
 }
 
