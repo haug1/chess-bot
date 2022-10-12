@@ -68,6 +68,6 @@ You need to have these tools:
   - workaround: refresh page
 - sometimes the backend will throw error parsing moves (known to occur on lichess)
   - workaround: restart server
-  - hypothesis: happens regularly on last move (when there's a mate in 1) and seemingly also when stockfish gives `bestmove` without `ponder`
+  - observation: happens regularly on last move (when there's a mate in 1) and seemingly also when stockfish gives `bestmove` without `ponder`
 - not able to observe moves when starting as white (lichess)
   - workaround: click 'Refresh' button
