@@ -20,27 +20,32 @@ const createEvalMove = (friendly, enemy) => ({
   ...(enemy && { enemy: createMove(enemy) }),
 });
 
-const BESTMOVE_MATCHER = "bestmove";
-const EVALUATION_MATCHER = " pv ";
-const SCORE_MATCHER = "score";
+const BESTMOVE_REGEX =
+  /bestmove ([a-z]\d[a-z]\d)(?: ponder )?([a-z]\d[a-z]\d)?/;
+const SCORE_REGEX = /score (cp|mate) (.*) nodes/;
+const EVAL_REGEX = /.* pv (.\d.\d)(?: )?(.\d.\d)?/;
 export function parseStockfishMessage(msg) {
   let evaluation, bestmove, score;
 
-  if (msg.includes(EVALUATION_MATCHER)) {
-    const index = msg.indexOf(EVALUATION_MATCHER);
-    const moves = msg.substr(index + EVALUATION_MATCHER.length);
-    const matches = /(.\d.\d)(?: )?(.\d.\d)?/.exec(moves);
-    evaluation = createEvalMove(matches[1], matches[2]);
-  } else if (msg.includes(BESTMOVE_MATCHER)) {
-    const [_, bestMove, ponder] =
-      /bestmove ([a-z]\d[a-z]\d)(?: ponder )?([a-z]\d[a-z]\d)?/.exec(msg);
-    bestmove = createBestMove(bestMove, ponder);
-  } else if (msg.includes("pthread sent an error")) {
-    throw new Error(msg);
+  const evalMatch = EVAL_REGEX.exec(msg);
+  if (evalMatch) {
+    const [_, friendly, enemy] = evalMatch;
+    evaluation = createEvalMove(friendly, enemy);
+  } else {
+    const bestmoveMatch = BESTMOVE_REGEX.exec(msg);
+    if (bestmoveMatch) {
+      const [_, bestMove, ponder] = bestmoveMatch;
+      bestmove = createBestMove(bestMove, ponder);
+    } else if (msg.includes("bestmove (none)")) {
+      bestmove = {};
+    } else if (msg.includes("pthread sent an error")) {
+      throw new Error(msg);
+    }
   }
 
-  if (msg.includes(SCORE_MATCHER)) {
-    const [_, type, res] = /score (cp|mate) (.*) nodes/.exec(msg);
+  const scoreMatch = SCORE_REGEX.exec(score);
+  if (scoreMatch) {
+    const [_, type, res] = scoreMatch;
     const isMate = type === "mate";
     const prefix = isMate ? type + " " : "";
     const scoreNumber = isMate ? res : parseInt(res) / 100;
