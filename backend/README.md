@@ -23,3 +23,4 @@ PS: Not meant for being consumed by more than one person at a time
 # todo
 
 - implement client here
+- typescript rewrite
