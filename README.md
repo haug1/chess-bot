@@ -61,3 +61,13 @@ You need to have these tools:
    4. choose the `frontend/bin/manifest.json` file
 4. go to chess.com/lichess and play vs the computer
 5. click 'refresh' if game gets out of sync (shouldn't really happen as of 26. sept 2022)
+
+# known issues
+
+- sometimes games on lichess get a bug where UI freezes on opponent turn
+  - workaround: refresh page
+- sometimes the backend will throw error parsing moves (known to occur on lichess)
+  - workaround: restart server
+  - hypothesis: happens regularly on last move (when there's a mate in 1) and seemingly also when stockfish gives `bestmove` without `ponder`
+- not able to observe moves when starting as white (lichess)
+  - workaround: click 'Refresh' button
