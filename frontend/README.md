@@ -5,6 +5,11 @@ Firefox extensions that queries the backend with the current FEN from a `chess.c
 Below is the svelte template README.
 PS: because we are building strictly for running as a browser extension on chess.com and lichess, the default vite/svelte run configurations in `package.json` may not be useful with the changes made to the default build process.
 
+# todo
+
+- unpin fetch-event-source dependency
+  - use npm package instead. now that we no longer need the custom edit making signal abort throw custom error, i think it's safe to use their original code
+
 # Svelte + TS + Vite
 
 This template should help get you started developing with Svelte and TypeScript in Vite.
