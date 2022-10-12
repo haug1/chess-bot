@@ -2,7 +2,7 @@ const LOOKUP = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
 const createXY = (boardPosition) => ({
   x: LOOKUP.indexOf(boardPosition[0]) + 1,
-  y: boardPosition[1],
+  y: parseInt(boardPosition[1]),
 });
 
 const createMove = (move) => ({
