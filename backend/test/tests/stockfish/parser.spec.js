@@ -38,6 +38,7 @@ describe("stockfish/parser.js", () => {
         enemy: { from: { x: 5, y: 7 }, to: { x: 5, y: 6 } },
       },
       raw,
+      score: "0.13",
     };
     const actual = parseStockfishMessage(raw);
     expect(actual).toEqual(expected);
@@ -64,5 +65,12 @@ describe("stockfish/parser.js", () => {
       errorMessage = e.message;
     }
     expect(errorMessage).toEqual(raw);
+  });
+
+  it("parse score", () => {
+    const raw =
+      "info depth 18 seldepth 32 multipv 1 score cp 41 lowerbound nodes 4375107 nps 1327801 hashfull 982 time 3295 pv d2d4";
+    const actual = parseStockfishMessage(raw).score;
+    expect(actual).toEqual("0.41");
   });
 });
