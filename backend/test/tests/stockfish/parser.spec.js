@@ -67,10 +67,19 @@ describe("stockfish/parser.js", () => {
     expect(errorMessage).toEqual(raw);
   });
 
-  it("parse score", () => {
-    const raw =
-      "info depth 18 seldepth 32 multipv 1 score cp 41 lowerbound nodes 4375107 nps 1327801 hashfull 982 time 3295 pv d2d4";
-    const actual = parseStockfishMessage(raw).score;
-    expect(actual).toEqual("0.41");
+  describe("parse score", () => {
+    it("score cp 41", () => {
+      const raw =
+        "info depth 18 seldepth 32 multipv 1 score cp 41 lowerbound nodes 4375107 nps 1327801 hashfull 982 time 3295 pv d2d4";
+      const actual = parseStockfishMessage(raw).score;
+      expect(actual).toEqual("0.41");
+    });
+
+    it("score mate 1", () => {
+      const raw =
+        "info depth 18 seldepth 32 multipv 1 score mate 1 lowerbound nodes 4375107 nps 1327801 hashfull 982 time 3295 pv d2d4";
+      const actual = parseStockfishMessage(raw).score;
+      expect(actual).toEqual("mate 1");
+    });
   });
 });

@@ -9,7 +9,7 @@
     "dev": "ENV=development node src/main.js",
     "debug": "DEBUG=1 ENV=development node src/main.js",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "test:http": "bash test/test.sh",
+    "test:curl": "bash test/test.sh",
     "postinstall": "cp node_modules/stockfish/src/stockfish.js node_modules/stockfish/src/stockfish.worker.js"
   },
   "dependencies": {
