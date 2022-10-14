@@ -24,7 +24,7 @@ export class LichessEngine extends ChessBotEngine {
   }
 
   protected get movesContainer(): Element {
-    const container = document.querySelector("l4x");
+    const container = document.querySelector("rm6");
     if (!container) throw new Error("Moves container not found");
     return container;
   }

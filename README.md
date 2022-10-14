@@ -71,6 +71,3 @@ You need to have these tools:
   - hypothesis: occurs when player right-clicks the board. causes exception in lichess source code.
   - attempted fix: wrap lichess highlights inside svg(inside lichess' svg), but resulted in lichess source code removing the highlights UI
   - fix idea: there is another svg graphics element that possibly can be used as the container for our highlights
-- not able to observe moves when starting as white (lichess)
-  - workaround: click 'Refresh' button
-  - hypothesis: happens because the move container re-mounts after first move is made
