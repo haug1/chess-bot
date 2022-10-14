@@ -69,5 +69,7 @@ You need to have these tools:
 - sometimes games on lichess get a bug where UI freezes on opponent turn
   - workaround: refresh page
   - hypothesis: occurs when player right-clicks the board. causes exception in lichess source code.
-  - attempted fix: wrap lichess highlights inside svg(inside lichess' svg), but resulted in lichess source code removing the highlights UI
-  - fix idea: there is another svg graphics element that possibly can be used as the container for our highlights
+  - attempted fixes:
+    - wrap lichess highlights inside svg(inside lichess' svg), but resulted in lichess source code removing the highlights UI
+    - using the other svg element
+  - fix idea: create a new svg similar to the one we mount to currently
