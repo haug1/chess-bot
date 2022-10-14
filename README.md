@@ -63,13 +63,3 @@ You need to have these tools:
    4. choose the `frontend/bin/manifest.json` file
 4. go to chess.com/lichess and play vs the computer
 5. click 'refresh' if game gets out of sync (shouldn't really happen as of 26. sept 2022)
-
-# known issues
-
-- sometimes games on lichess get a bug where UI freezes on opponent turn
-  - workaround: refresh page
-  - hypothesis: occurs when player right-clicks the board. causes exception in lichess source code.
-  - attempted fixes:
-    - wrap lichess highlights inside svg(inside lichess' svg), but resulted in lichess source code removing the highlights UI
-    - using the other svg element
-  - fix idea: create a new svg similar to the one we mount to currently

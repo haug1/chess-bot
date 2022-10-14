@@ -4,8 +4,7 @@ import { ChessBotEngine } from "./base";
 function createSvg() {
   // <svg x="-4" y="-4" viewBox="-4 -4 8 8">
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("x", "-4");
-  svg.setAttribute("y", "-4");
+  svg.setAttribute("class", "cg-shapes");
   svg.setAttribute("viewBox", "-4 -4 8 8");
   svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
   return svg;
@@ -15,12 +14,11 @@ export class LichessEngine extends ChessBotEngine {
   public Highlights = LichessHighlights;
 
   protected get highlightsTarget(): Element {
-    const target = document.querySelector("cg-container svg.cg-shapes g");
+    const target = document.querySelector("cg-container");
     if (!target) throw new Error("Highlights target not found");
-    // const svg = createSvg();
-    // target.appendChild(svg);
-    // return svg;
-    return target;
+    const svg = createSvg();
+    target.appendChild(svg);
+    return svg;
   }
 
   protected get movesContainer(): Element {
