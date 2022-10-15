@@ -2,6 +2,8 @@
 
 Provides stockfish best move analysis during gameplay (vs the computer) on `chess.com` or `lichess` with Firefox browser
 
+![firefox_EwkQNvchKq](https://user-images.githubusercontent.com/31956036/195960766-e7392aef-c9b2-476e-a78b-f8a8923d9cd2.gif)
+
 Go to [installing/usage](#installing)
 
 # info
