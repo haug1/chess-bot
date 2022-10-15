@@ -15,7 +15,6 @@ The product consists of 2 components:
 - asks the stockfish server for the best move based on the current game state and updates whenever opponent makes a move happens
 - displays the stockfish evaluation on the web page with highlights on the board (chess.com/lichess)
 - click 'refresh' button if the game gets out of sync
-- there are seperate extensions for each platform chess.com and lichess, they only load on these pages respectively: `https://www.chess.com/*`, `https://lichess.org/*`
 
 ## local HTTP server for stockfish evaluation as a service (backend, runs on your local computer)
 
