@@ -64,4 +64,4 @@ You need to have these tools:
    3. click `Load Temporary Add-on...`
    4. choose the `frontend/bin/manifest.json` file
 4. go to chess.com/lichess and play vs the computer
-5. click 'refresh' if game gets out of sync (shouldn't really happen as of 26. sept 2022)
+5. click 'refresh' if game gets out of sync (shouldn't really happen)
