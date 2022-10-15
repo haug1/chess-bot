@@ -25,7 +25,10 @@ const BESTMOVE_REGEX =
 const SCORE_REGEX = /.*score (cp|mate) (-?\d+\.?\d*).*/;
 const EVAL_REGEX = /.* pv (.\d.\d)(?: )?(.\d.\d)?/;
 export function parseStockfishMessage(msg) {
-  let evaluation, bestmove, score;
+  let evaluation,
+    bestmove,
+    score,
+    gg = false;
 
   const evalMatch = EVAL_REGEX.exec(msg);
   if (evalMatch) {
@@ -38,13 +41,16 @@ export function parseStockfishMessage(msg) {
       bestmove = createBestMove(bestMove, ponder);
     } else if (msg.includes("bestmove (none)")) {
       bestmove = {};
+      gg = true;
     } else if (msg.includes("pthread sent an error")) {
       throw new Error(msg);
     }
   }
 
   const scoreMatch = SCORE_REGEX.exec(msg);
-  if (scoreMatch) {
+  if (gg) {
+    score = "GG";
+  } else if (scoreMatch) {
     const [_, type, res] = scoreMatch;
     const isMate = type === "mate";
     const prefix = isMate ? type + " " : "";

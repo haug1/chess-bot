@@ -12,34 +12,42 @@
     }
   }
 
-  function getBorderColor(state: States) {
-    switch (state) {
-      case States.ERROR:
-        return "red";
-      case States.ABORTED:
-        return "orange";
-      case States.WAITING_FOR_STOCKFISH:
-        return "yellow";
-      case States.WAITING_FOR_PLAYER:
-        return "green";
-      default:
-        return "black";
+  function getBorderColor(state: States, score: string) {
+    if (score === "GG") {
+      return "green";
+    } else {
+      switch (state) {
+        case States.ERROR:
+          return "red";
+        case States.ABORTED:
+          return "orange";
+        case States.WAITING_FOR_STOCKFISH:
+          return "yellow";
+        case States.WAITING_FOR_PLAYER:
+          return "green";
+        default:
+          return "black";
+      }
     }
   }
 
-  function getText(state: States, stockfishResponse: string) {
-    switch (state) {
-      case States.ERROR:
-        return "ERROR";
-      case States.ABORTED:
-        return "ABORTED";
-      case States.WAITING_FOR_OPPONENT:
-        return "Waiting for opponent..";
-      case States.WAITING_FOR_STOCKFISH:
-      case States.WAITING_FOR_PLAYER:
-        return stockfishResponse;
-      default:
-        return "";
+  function getText(state: States, stockfishResponse: string, score: string) {
+    if (score == "GG") {
+      return score;
+    } else {
+      switch (state) {
+        case States.ERROR:
+          return "ERROR";
+        case States.ABORTED:
+          return "ABORTED";
+        case States.WAITING_FOR_OPPONENT:
+          return "Waiting for opponent..";
+        case States.WAITING_FOR_STOCKFISH:
+        case States.WAITING_FOR_PLAYER:
+          return stockfishResponse;
+        default:
+          return "";
+      }
     }
   }
 
@@ -49,12 +57,12 @@
 
   $: styles = {
     "border-width": getBorderWidth($state),
-    "border-color": getBorderColor($state),
+    "border-color": getBorderColor($state, $score),
   };
   $: style = Object.keys(styles)
     .map((k) => `--${k}:${styles[k]}`)
     .join(";");
-  $: text = getText($state, $stockfishResponse);
+  $: text = getText($state, $stockfishResponse, $score);
 </script>
 
 <div {style}>

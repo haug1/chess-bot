@@ -44,14 +44,14 @@ describe("stockfish/parser.js", () => {
     expect(actual).toEqual(expected);
   });
 
-  it("parse no bestmove", () => {
+  it.only("parse no bestmove", () => {
     const raw = "bestmove (none)";
     const actual = parseStockfishMessage(raw);
     const expected = {
       bestmove: {},
       evaluation: undefined,
       raw: "bestmove (none)",
-      score: undefined,
+      score: "GG",
     };
     expect(actual).toEqual(expected);
   });

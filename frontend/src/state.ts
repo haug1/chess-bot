@@ -18,6 +18,7 @@ export enum States {
   WAITING_FOR_OPPONENT, // waiting for opponent to make a move
   WAITING_FOR_STOCKFISH, // waiting for response from stockfish
   WAITING_FOR_PLAYER, // waiting for player to make a move (stockfish response ok)
+  GAME_OVER,
 }
 
 export const score = writable("");
