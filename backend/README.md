@@ -1,27 +1,18 @@
-# chess-bot/backend
+# stockfish node.js wrapper
 
-Simple nodejs stockfish HTTP server.
-PS: Not meant for being consumed by more than one person at a time
+Aims to provide a simple node.js wrapper for Stockfish that is up-to-date as best as possible and has an intuitive and user-friendly interface.
 
-# install dependencies
+## Components
 
-`npm i`
+- A simple Stockfish wrapper this simply exposes bare-bones functions to interact with the Stockfish CLI.
+- A function for evaluating a position based on a FEN string.
+- (TODO) An HTTP server wrapper around the above-mentioned components.
+- Simple (not that useful) CLI demo of interacting with the Stockfish wrapper
 
-# run tests
+## CLI demo
 
-`npm test`
+A very simple CLI demo that simply proves the concept and shows how the wrapper code can be utilized.
 
-# start server
+## HTTP server (TODO)
 
-`npm start`
-
-# Slow evaluation of FEN string (20 sec consistently)
-
-2rq1rk1/pb3ppp/1p2Bn2/4n3/1P1P2P1/P6P/1B1Q1P2/R3R1K1 b - - 0 20
-4r1k1/ppp2ppp/8/3q4/3P3P/2P1BPbb/P3K3/R2Q4 b - - 3 19
-
-# todo
-
-- implement client here
-- typescript rewrite
-- improving test coverage
+Exposes an endpoint that returns a stream of Stockfish evaluations for a FEN string until the best move is found or the connection is closed.

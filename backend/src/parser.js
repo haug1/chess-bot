@@ -24,7 +24,7 @@ const BESTMOVE_REGEX =
   /bestmove ([a-z]\d[a-z]\d)(?: ponder )?([a-z]\d[a-z]\d)?/;
 const SCORE_REGEX = /.*score (cp|mate) (-?\d+\.?\d*).*/;
 const EVAL_REGEX = /.* pv (.\d.\d)(?: )?(.\d.\d)?/;
-export function parseStockfishMessage(msg) {
+function parseStockfishMessage(msg) {
   let evaluation,
     bestmove,
     score,
@@ -67,3 +67,5 @@ export function parseStockfishMessage(msg) {
       }
     : undefined;
 }
+
+module.exports = { parseStockfishMessage };
