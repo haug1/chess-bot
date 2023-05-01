@@ -26,13 +26,11 @@ async function startEngine() {
     );
   }
   // Attempts to download the Stockfish engine binary for the current platform if it doesn't already exist
-  await downloadStockfishForPlatform(
-    process.platform === "win32" ? "win" : "linux"
-  );
+  const binaryFilepath = await downloadStockfishForPlatform();
   return new Promise(async (resolve, reject) => {
     try {
       console.log("Initializing Stockfish engine..");
-      stockfishProcess = exec("./bin/stockfish");
+      stockfishProcess = exec("./" + binaryFilepath);
       stockfishProcess.on("close", defaultStockfishClosedHandler);
       stockfishProcess.stdout.on("data", defaultStockfishOutputHandler);
       stockfishProcess.stderr.on("data", defaultStockfishErrorHandler);

@@ -5,6 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "preinstall": "DEBUG=1 node scripts/install.js # DOWNLOAD AND EXTRACT BINARIES",
+    "cli": "./dist/stockfish-cli",
+    "http": "./dist/stockfish-http-server",
     "dev:cli": "DEBUG=1 node cli",
     "dev:http": "DEBUG=1 node http-server",
     "build:cli": "./scripts/build.sh cli",

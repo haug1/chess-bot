@@ -11,7 +11,7 @@ const fastify = createFastify({
     level: process.env.DEBUG ? "debug" : undefined,
     stream: pretty({
       colorize: true,
-      translateTime: "HH:MM:ss Z",
+      translateTime: true,
       ignore: "pid,hostname",
     }),
   },
@@ -46,7 +46,7 @@ function getFenFromMoves(moves) {
 // { moves: ["e4"] }
 // Returns text/event-stream
 // each chunk is a stockfish evaluation,
-// see `stockfish/parser.js` for structure
+// see `src/parser.js` for structure/details on parsing of Stockfish engine output
 fastify.post("/moves/sse", async (request, reply) => {
   reply.raw.writeHead(200, {
     "Content-Type": "text/event-stream",
@@ -55,6 +55,7 @@ fastify.post("/moves/sse", async (request, reply) => {
     "x-no-compression": 1,
   });
   try {
+    request.socket.on("end", () => cancelCurrentOperation());
     await evalPosition(getFenFromMoves(request.body.moves), (v) => {
       reply.raw.write(`data: ${JSON.stringify(v)}\n\n`);
     });
@@ -71,7 +72,7 @@ fastify.post("/moves/sse", async (request, reply) => {
 // rnbqkbnr/pp1ppppp/8/2p5/8/3P4/PPP1PPPP/RNBQKBNR w KQkq c6 0 2
 // Returns text/event-stream
 // each chunk is a stockfish evaluation,
-// see `stockfish/parser.js` for structure
+// see `src/parser.js` for structure/details on parsing of Stockfish engine output
 fastify.post("/fen/sse", async (request, reply) => {
   reply.raw.writeHead(200, {
     "Content-Type": "text/event-stream",
@@ -80,10 +81,7 @@ fastify.post("/fen/sse", async (request, reply) => {
     "x-no-compression": 1,
   });
   try {
-    request.socket.on("end", () => {
-      console.log("cancelled");
-      cancelCurrentOperation();
-    });
+    request.socket.on("end", () => cancelCurrentOperation());
     await evalPosition(request.body, (v) => {
       reply.raw.write(`data: ${JSON.stringify(v)}\n\n`);
     });

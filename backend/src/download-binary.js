@@ -73,12 +73,12 @@ function execCommand(command) {
   });
 }
 
-async function unzipStockfish(filename, platform) {
+async function unzipStockfish(filename, outFilePath) {
   const filenameMinusExt = filename.replace(".zip", "");
   await execCommand(
     `unzip -j ${filename} ${filenameMinusExt}/stockfish* -d bin/`
   );
-  await execCommand(`mv bin/stockfish* bin/stockfish`);
+  await execCommand("mv bin/stockfish* " + outFilePath);
 }
 
 function deleteZip(filename) {
@@ -92,25 +92,31 @@ async function getLatestVersion() {
   return releasesResponse.data[0].name.split(" ")[1];
 }
 
-/**
- *
- * @param {"win"|"linux"} platform
- * @returns
- */
-async function downloadStockfishForPlatform(platform) {
+async function downloadStockfishForPlatform() {
+  const platform =
+    process.platform === "win32"
+      ? "win"
+      : process.platform === "linux"
+      ? "linux"
+      : undefined;
   if (!["win", "linux"].includes(platform))
     throw new Error(
       `The specified platform ${platform} is not supported. (win/linux only)`
     );
-  const filename = stockfishZipFilename(await getLatestVersion(), platform);
-  if (existsSync("bin/stockfish")) {
-    return debug(
-      "cancelled download of " + filename + " because it's already installed"
+  const version = await getLatestVersion();
+  const filename = stockfishZipFilename(version, platform);
+  const suffix = `-${version}-${platform}`;
+  const outFilepath = "bin/stockfish" + suffix;
+  if (existsSync(outFilepath)) {
+    debug(
+      "Cancelled download of " + filename + " because it's already installed."
     );
+    return outFilepath;
   }
   await downloadStockfish(filename);
-  await unzipStockfish(filename, platform);
+  await unzipStockfish(filename, outFilepath);
   await deleteZip(filename);
+  return outFilepath;
 }
 
 module.exports = { downloadStockfishForPlatform };
