@@ -1,29 +1,26 @@
 {
-  "name": "chess-bot-backend",
+  "name": "stockfish-wrapper",
   "version": "1.0.0",
-  "description": "Simple stockfish HTTP server",
-  "main": "src/main.js",
-  "type": "module",
+  "description": "",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node src/main.js",
-    "dev": "ENV=development node src/main.js",
-    "debug": "DEBUG=1 ENV=development node src/main.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "test:curl": "bash test/test.sh",
-    "postinstall": "cp node_modules/stockfish/src/stockfish.js node_modules/stockfish/src/stockfish.worker.js"
+    "preinstall": "DEBUG=1 node scripts/install.js # DOWNLOAD AND EXTRACT BINARIES",
+    "dev:cli": "DEBUG=1 node cli",
+    "dev:http": "DEBUG=1 node http-server",
+    "build:cli": "./scripts/build.sh cli",
+    "build:http": "./scripts/build.sh http-server"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "chess.js": "^1.0.0-alpha.0",
-    "fastify": "^4.5.3",
-    "stockfish": "^15.0.0"
-  },
-  "devDependencies": {
-    "@types/jest": "^29.1.2",
-    "jest": "^29.1.2",
+    "axios": "^1.4.0",
+    "chess.js": "^1.0.0-beta.5",
+    "fastify": "^4.17.0",
     "pino-pretty": "^9.1.0"
   },
-  "keywords": [
-    "stockfish",
-    "nodejs"
-  ]
+  "devDependencies": {
+    "@vercel/ncc": "^0.36.1",
+    "pkg": "^5.8.1"
+  }
 }
