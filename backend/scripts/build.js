@@ -1,19 +1,30 @@
-const ncc = require("@vercel/ncc");
 const pkg = require("pkg");
-const path = require("path");
-const { writeFileSync, unlinkSync } = require("fs");
+const { unlinkSync } = require("fs");
+const { rollup } = require("rollup");
+const resolve = require("@rollup/plugin-node-resolve");
+const json = require("@rollup/plugin-json");
 const { isWindows } = require("../src/utils");
+const { default: commonjs } = require("@rollup/plugin-commonjs");
 
 (async () => {
-  const inputFilepath = path.relative(__dirname, process.argv[2] + "/index.js");
-  const { code } = await ncc(inputFilepath);
-  writeFileSync("out.cjs", code);
+  const result = await rollup({
+    input: process.argv[2] + "/index.js",
+    output: {
+      file: "dist/out.cjs",
+      format: "cjs",
+    },
+    plugins: [json(), resolve(), commonjs()],
+  });
+  await result.write({
+    format: "cjs",
+    file: "dist/out.cjs",
+  });
   await pkg.exec([
-    "out.cjs",
+    "dist/out.cjs",
     "--target",
     "host",
     "--output",
     "dist/" + process.argv[2] + (isWindows() ? ".exe" : ""),
   ]);
-  unlinkSync("out.cjs");
+  unlinkSync("dist/out.cjs");
 })();
