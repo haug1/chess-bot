@@ -1,7 +1,14 @@
-const { exec } = require("child_process");
-const { createWriteStream, existsSync } = require("fs");
-const { debug } = require("../src/utils");
+const { existsSync, mkdirSync } = require("fs");
+const { debug, unzipArchive, isWindows } = require("../src/utils");
 const axios = require("axios").default;
+
+// Downloads and extracts the latest version of the Stockfish binary
+
+// Breaks if any of the following things change:
+// - the official Stockfish github repo is github.com/official-stockfish/Stockfish
+// - the latest GitHub release is named "Stockfish X.X" (decimals are optional) where X.X is a version currently available for download
+// - download must be available at https://stockfishchess.org/files/stockfish_{version}_{platform}_x64.zip where platform can be either "win" or "linux"
+// - download must be a zip archive where only one file in the archive (the binary file) matches the pattern /.*\/stockfish.*/, i.e. stockfish_15.1_win_x64/stockfish-windows-2022-x86-64.exe
 
 const stockfishDownloadBaseUrl = "https://stockfishchess.org/files/";
 const stockfishZipFilename = (version, platform) =>
@@ -12,6 +19,9 @@ async function downloadStockfish(filename) {
   const url = stockfishDownloadBaseUrl + filename;
   const { data } = await axios.get(url, {
     responseType: "stream",
+    headers: {
+      "accept-encoding": "gzip,deflate",
+    },
     onDownloadProgress: function (progress) {
       if (progress.estimated) {
         const downloadRateMbps = progress.rate / 1000000 + "mb/s";
@@ -35,54 +45,7 @@ async function downloadStockfish(filename) {
       }
     },
   });
-  return new Promise(function (resolve, reject) {
-    let error = false;
-    const writer = createWriteStream(filename);
-    data.pipe(writer);
-    writer.on("error", function (error) {
-      error = true;
-      writer.close();
-      reject(error);
-    });
-    writer.on("close", function () {
-      if (!error) resolve();
-      debug("downloaded " + filename + " successfully");
-    });
-  });
-}
-
-function execCommand(command) {
-  return new Promise(function (resolve, reject) {
-    const process = exec(command);
-    process.on("spawn", function () {
-      debug("$ " + command);
-    });
-    process.stdout.on("data", function (msg) {
-      debug(msg);
-    });
-    process.stderr.on("data", function (msg) {
-      debug(msg);
-    });
-    process.on("close", function (code) {
-      if (code != 0) reject(new Error(command + " exited with code " + code));
-      else {
-        debug(command + " completed with exitCode " + code);
-        resolve(code);
-      }
-    });
-  });
-}
-
-async function unzipStockfish(filename, outFilePath) {
-  const filenameMinusExt = filename.replace(".zip", "");
-  await execCommand(
-    `unzip -j ${filename} ${filenameMinusExt}/stockfish* -d bin/`
-  );
-  await execCommand("mv bin/stockfish* " + outFilePath);
-}
-
-function deleteZip(filename) {
-  return execCommand("rm " + filename);
+  return data;
 }
 
 async function getLatestVersion() {
@@ -93,12 +56,11 @@ async function getLatestVersion() {
 }
 
 async function downloadStockfishForPlatform() {
-  const platform =
-    process.platform === "win32"
-      ? "win"
-      : process.platform === "linux"
-      ? "linux"
-      : undefined;
+  const platform = isWindows()
+    ? "win"
+    : process.platform === "linux"
+    ? "linux"
+    : undefined;
   if (!["win", "linux"].includes(platform))
     throw new Error(
       `The specified platform ${platform} is not supported. (win/linux only)`
@@ -106,16 +68,19 @@ async function downloadStockfishForPlatform() {
   const version = await getLatestVersion();
   const filename = stockfishZipFilename(version, platform);
   const suffix = `-${version}-${platform}`;
-  const outFilepath = "bin/stockfish" + suffix;
+  const outFilepath = "bin/stockfish" + suffix + (isWindows() ? ".exe" : "");
   if (existsSync(outFilepath)) {
     debug(
       "Cancelled download of " + filename + " because it's already installed."
     );
     return outFilepath;
   }
-  await downloadStockfish(filename);
-  await unzipStockfish(filename, outFilepath);
-  await deleteZip(filename);
+  if (!existsSync("bin")) mkdirSync("bin");
+  await unzipArchive(
+    await downloadStockfish(filename),
+    outFilepath,
+    /.*\/stockfish.*/
+  );
   return outFilepath;
 }
 

@@ -1,6 +1,6 @@
 const { exec, ChildProcess } = require("child_process");
 const { parseStockfishMessage } = require("./parser");
-const { debug } = require("./utils");
+const { debug, isWindows } = require("./utils");
 const { downloadStockfishForPlatform } = require("./download-binary");
 
 /** @type {ChildProcess} */
@@ -26,11 +26,14 @@ async function startEngine() {
     );
   }
   // Attempts to download the Stockfish engine binary for the current platform if it doesn't already exist
-  const binaryFilepath = await downloadStockfishForPlatform();
+  const outFilepath = await downloadStockfishForPlatform();
   return new Promise(async (resolve, reject) => {
     try {
+      const command = isWindows()
+        ? ".\\" + outFilepath.replace("/", "\\")
+        : "./" + outFilepath;
       console.log("Initializing Stockfish engine..");
-      stockfishProcess = exec("./" + binaryFilepath);
+      stockfishProcess = exec(command);
       stockfishProcess.on("close", defaultStockfishClosedHandler);
       stockfishProcess.stdout.on("data", defaultStockfishOutputHandler);
       stockfishProcess.stderr.on("data", defaultStockfishErrorHandler);
