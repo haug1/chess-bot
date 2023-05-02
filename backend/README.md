@@ -26,3 +26,7 @@ Does not handle concurrent requests, meaning there can only be one consumer of t
 - offline mode
 
 The program currently requires an internet connection starting up because it checks for the latest version of Stockfish. There should be a fallback in case there is no internet connection and a Stockfish binary file is already available.
+
+- better self-updating of Stockfish
+
+The program currently self-updates the Stockfish engine version at launch. This may break the application if there are any compatibility changes. It seems unlikely to happen looking back at previous versions, but it would be nice to have some handling that automatically makes it fall back to a working version if it breaks completely.
