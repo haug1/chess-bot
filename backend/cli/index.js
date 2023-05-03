@@ -29,8 +29,8 @@ const {
         console.log("bye!");
         process.exit(0);
       case "eval":
-        evalPosition(sData[1], (eval) => {
-          console.log(eval);
+        evalPosition(sData[1], (evaluation) => {
+          console.log(evaluation);
         });
         break;
       default:
