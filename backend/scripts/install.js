@@ -1,5 +1,4 @@
-const { downloadStockfishForPlatform } = require("../src/download-binary");
-
-(async function () {
-  await downloadStockfishForPlatform();
-})();
+import { downloadStockfishForPlatform } from '../src/download-binary.js'
+;(async function () {
+  await downloadStockfishForPlatform()
+})()

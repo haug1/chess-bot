@@ -1,11 +1,11 @@
-function debug(...params) {
+import { createWriteStream } from 'fs'
+import { Parse } from 'unzip-stream'
+
+export function debug(...params) {
   if (process.env.DEBUG) {
-    console.debug(...params);
+    console.debug(...params)
   }
 }
-
-const fs = require("fs");
-const unzip = require("unzip-stream");
 
 /**
  * @param {NodeJS.ReadableStream} readStream
@@ -13,33 +13,26 @@ const unzip = require("unzip-stream");
  * @param {RegExp} fileRegex
  * @returns {Promise<void>}
  */
-function unzipArchive(readStream, outputPath, fileRegex = /.*/) {
+export function unzipArchive(readStream, outputPath, fileRegex = /.*/) {
   return new Promise((resolve, reject) => {
-    readStream.on("error", reject);
-    readStream.pipe(unzip.Parse()).on("entry", function (entry) {
+    readStream.on('error', reject)
+    readStream.pipe(Parse()).on('entry', function (entry) {
       if (fileRegex.test(entry.path)) {
-        const writeStream = fs.createWriteStream(outputPath);
-        writeStream.on("finish", resolve);
-        writeStream.on("error", reject);
-        entry.pipe(writeStream);
+        const writeStream = createWriteStream(outputPath)
+        writeStream.on('finish', resolve)
+        writeStream.on('error', reject)
+        entry.pipe(writeStream)
       } else {
-        entry.autodrain();
+        entry.autodrain()
       }
-    });
-  });
+    })
+  })
 }
 
-function isWindows() {
-  return process.platform === "win32";
+export function isWindows() {
+  return process.platform === 'win32'
 }
 
-function isLinux() {
-  return process.platform === "linux";
+export function isLinux() {
+  return process.platform === 'linux'
 }
-
-module.exports = {
-  debug,
-  isLinux,
-  isWindows,
-  unzipArchive,
-};

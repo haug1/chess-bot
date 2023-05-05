@@ -2,15 +2,17 @@
   "name": "stockfish-wrapper",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "src/index.js",
   "scripts": {
     "preinstall": "node scripts/install.js # DOWNLOAD AND EXTRACT BINARIES",
     "cli": "./dist/stockfish-cli",
     "http": "./dist/stockfish-http-server",
-    "dev:cli": "DEBUG=1 node cli",
-    "dev:http": "DEBUG=1 node http-server",
+    "dev:cli": "node cli",
+    "dev:http": "node http-server",
     "build:cli": "node scripts/build.js cli",
-    "build:http": "node scripts/build.js http-server"
+    "build:http": "node scripts/build.js http-server",
+    "lint": "prettier . -w"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +29,7 @@
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "pkg": "^5.8.1",
+    "prettier": "^2.8.8",
     "rollup": "^3.21.3"
   }
 }
