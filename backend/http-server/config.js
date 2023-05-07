@@ -13,6 +13,8 @@ export const fastify = createFastify({
   },
 })
 
+fastify.get('/', (_, reply) => reply.send('UP'))
+
 // Sample request:
 // POST /moves/sse
 // Content-Type: application/json
