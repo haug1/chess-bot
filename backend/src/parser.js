@@ -39,7 +39,10 @@ export function parseStockfishMessage(msg) {
     if (bestmoveMatch) {
       const [_, bestMove, ponder] = bestmoveMatch
       bestmove = createBestMove(bestMove, ponder)
-    } else if (msg.includes('bestmove (none)')) {
+    } else if (
+      msg.includes('bestmove (none)') ||
+      /.*score mate 0.*/.test(msg)
+    ) {
       bestmove = {}
       gg = true
     } else if (msg.includes('pthread sent an error')) {

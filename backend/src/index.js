@@ -1,18 +1,21 @@
 import { exec, ChildProcess } from 'child_process'
 import { parseStockfishMessage } from './parser.js'
-import { debug, isWindows } from './utils.js'
+import { isWindows } from './utils.js'
 import { downloadStockfishForPlatform } from './download-binary.js'
 
 /** @type {ChildProcess} */
 let stockfishProcess
 
-const defaultStockfishClosedHandler = (code) => {
-  stockfishProcess = undefined
-  console.warn('WARN: Stockfish exited with code ' + code)
-  console.warn('Exiting..')
-  process.exit(0)
+const defaultStockfishClosedHandler = async (code) => {
+  console.warn('WARN: Stockfish unexpectedly exited with code ' + code)
+  console.warn('Restarting engine..')
+  try {
+    await stopEngine()
+  } finally {
+    await startEngine()
+  }
 }
-const defaultStockfishOutputHandler = (msg) => debug(msg)
+const defaultStockfishOutputHandler = (msg) => console.debug(msg)
 const defaultStockfishErrorHandler = (msg) => console.warn(msg)
 
 /**
@@ -35,6 +38,7 @@ export async function startEngine() {
       console.log('Initializing Stockfish engine..')
       stockfishProcess = exec(command)
       stockfishProcess.on('close', defaultStockfishClosedHandler)
+      stockfishProcess.on('error', defaultStockfishErrorHandler)
       stockfishProcess.stdout.on('data', defaultStockfishOutputHandler)
       stockfishProcess.stderr.on('data', defaultStockfishErrorHandler)
       await awaitMessage((data) =>
@@ -78,11 +82,12 @@ export async function evalPosition(fenPosition, oneval) {
           sendCommand('stop')
         }
         if (parsedData.bestmove) {
-          const executionTimeMs = new Date().getTime() - startTime
+          const executionTimeMs = (
+            (new Date().getTime() - startTime) /
+            1000
+          ).toFixed(2)
           console.log(
-            `Found best move after ${(executionTimeMs / 1000).toFixed(
-              2
-            )} seconds`
+            `Found best move after ${executionTimeMs} seconds. ${parsedData.raw}`
           )
           return true
         }
@@ -105,7 +110,7 @@ export async function isReady() {
  * Will throw exception if engine is not running.
  */
 export function sendCommand(cmd) {
-  debug('Try send command ' + cmd)
+  console.debug('Try send command ' + cmd)
   if (stockfishProcess) {
     stockfishProcess.stdin.write(cmd + '\n')
   }
@@ -169,17 +174,34 @@ export async function cancelCurrentOperation() {
  */
 export function stopEngine() {
   stockfishProcess.off('close', defaultStockfishClosedHandler)
-  return new Promise(async (resolve) => {
-    const handler = () => {
-      stockfishProcess.stdout.off('data', defaultStockfishOutputHandler)
-      stockfishProcess.stderr.off('data', defaultStockfishErrorHandler)
-      stockfishProcess.off('close', handler)
-      stockfishProcess.kill()
-      stockfishProcess.unref()
-      stockfishProcess = undefined
-      resolve()
+  const timeoutMs = 2000
+  return new Promise((resolve) => {
+    const timeoutHandler = setTimeout(
+      () =>
+        reject(
+          new Error(
+            `Timed out waiting for Stockfish to respond to ${command} (5 seconds)`
+          )
+        ),
+      timeoutMs
+    )
+    try {
+      const handler = () => {
+        stockfishProcess?.stdout?.off('data', defaultStockfishOutputHandler)
+        stockfishProcess?.stderr?.off('data', defaultStockfishErrorHandler)
+        stockfishProcess?.off('error', defaultStockfishErrorHandler)
+        stockfishProcess?.off('close', handler)
+        stockfishProcess?.kill()
+        stockfishProcess?.unref()
+        stockfishProcess = undefined
+        clearTimeout(timeoutHandler)
+        resolve()
+      }
+      stockfishProcess.on('close', handler)
+      sendCommand('quit')
+    } catch (err) {
+      clearTimeout(timeoutHandler)
+      reject(err)
     }
-    stockfishProcess.on('close', handler)
-    sendCommand('quit')
   })
 }

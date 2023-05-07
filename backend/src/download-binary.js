@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { existsSync, mkdirSync } from 'fs'
-import { debug, unzipArchive, isWindows } from '../src/utils.js'
+import { unzipArchive, isWindows } from '../src/utils.js'
 
 // Downloads and extracts the latest version of the Stockfish binary
 
@@ -15,7 +15,7 @@ const stockfishZipFilename = (version, platform) =>
   `stockfish_${version}_${platform}_x64.zip`
 
 async function downloadStockfish(filename) {
-  debug('downloading stockfish..')
+  console.debug('downloading stockfish..')
   const url = stockfishDownloadBaseUrl + filename
   const { data } = await axios.get(url, {
     responseType: 'stream',
@@ -32,7 +32,7 @@ async function downloadStockfish(filename) {
         const currentMbDownloaded =
           (progress.loaded / 1000000).toFixed(2) + 'mb'
         const totalMbToDownload = (progress.total / 1000000).toFixed(2) + 'mb'
-        debug(
+        console.debug(
           url,
           currentMbDownloaded +
             '/' +
@@ -70,7 +70,7 @@ export async function downloadStockfishForPlatform() {
   const suffix = `-${version}-${platform}`
   const outFilepath = 'bin/stockfish' + suffix + (isWindows() ? '.exe' : '')
   if (existsSync(outFilepath)) {
-    debug(
+    console.debug(
       'Cancelled download of ' + filename + " because it's already installed."
     )
     return outFilepath

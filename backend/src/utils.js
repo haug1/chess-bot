@@ -1,12 +1,6 @@
 import { createWriteStream } from 'fs'
 import { Parse } from 'unzip-stream'
 
-export function debug(...params) {
-  if (process.env.DEBUG) {
-    console.debug(...params)
-  }
-}
-
 /**
  * @param {NodeJS.ReadableStream} readStream
  * @param {string} outputPath
