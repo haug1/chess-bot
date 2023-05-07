@@ -1,9 +1,7 @@
-import type { SvelteComponentDev } from "svelte/internal";
+import type { ComponentType } from "svelte/internal";
 import { StockfishClient, type StockfishResult } from "../api/stockfish";
 import {
   score,
-  state,
-  States,
   stockfishResponse,
   suggestedEnemyMoves,
   suggestedFriendlyMoves,
@@ -34,7 +32,7 @@ const isMoveEqual = (move1, move2) =>
   move1.to.y === move2.to.y;
 
 export abstract class ChessBotEngine implements IChessBotEngine {
-  protected abstract Highlights: typeof SvelteComponentDev;
+  protected abstract Highlights: ComponentType;
   protected abstract get movesContainer(): Element | null;
   protected abstract get highlightsTarget(): Element | null;
   protected abstract get statusTarget(): Element | null;
@@ -43,7 +41,7 @@ export abstract class ChessBotEngine implements IChessBotEngine {
 
   private readonly _stockfish = new StockfishClient();
   private moveCounter = 0;
-  private moveObserver: MutationObserver;
+  private moveObserver?: MutationObserver;
   private friendlyMoves: Move[];
   private enemyMoves: Move[];
 
@@ -60,13 +58,13 @@ export abstract class ChessBotEngine implements IChessBotEngine {
     new Promise(
       () =>
         new this.Highlights({
-          target: this.highlightsTarget,
+          target: this.highlightsTarget!,
         })
     );
     new Promise(
       () =>
         new Status({
-          target: this.statusTarget,
+          target: this.statusTarget!,
         })
     );
     this.onMoveObserved();
@@ -85,22 +83,17 @@ export abstract class ChessBotEngine implements IChessBotEngine {
 
   private async onMoveObserved() {
     ++this.moveCounter;
-    try {
-      suggestedFriendlyMoves.set([]);
-      suggestedEnemyMoves.set([]);
-      this._stockfish.abort();
-      await this.handleTurn(this.moveCounter % 2 !== 0);
-    } catch (e) {
-      state.set(States.ERROR);
-      throw e;
-    }
+    suggestedFriendlyMoves.set([]);
+    suggestedEnemyMoves.set([]);
+    this._stockfish.abort();
+    await this.handleTurn(this.moveCounter % 2 !== 0);
   }
 
   private startObservingMoves() {
     this.moveObserver = new MutationObserver(() => {
       this.onMoveObserved();
     });
-    this.moveObserver.observe(this.movesContainer, {
+    this.moveObserver.observe(this.movesContainer!, {
       childList: true,
       subtree: true,
     });
@@ -118,7 +111,6 @@ export abstract class ChessBotEngine implements IChessBotEngine {
   }
 
   private async handleTurn(isPlayerTurn: boolean) {
-    state.set(States.WAITING_FOR_STOCKFISH);
     try {
       await this._stockfish.getEvaluation(
         this.scrapeMoves(),
@@ -174,20 +166,13 @@ export abstract class ChessBotEngine implements IChessBotEngine {
               );
           }
 
-          if (stockfishResult.score) score.set(stockfishResult.score);
+          if (stockfishResult.score) {
+            score.set(stockfishResult.score);
+          }
         }
       );
-
-      if (isPlayerTurn) {
-        state.set(States.WAITING_FOR_PLAYER);
-      } else {
-        state.set(States.WAITING_FOR_OPPONENT);
-      }
     } catch (e) {
-      if (e.stale || e.aborted) {
-        //   state.set(States.ABORTED);
-        //   this._stockfish.abort();
-      } else throw e;
+      if (!e.stale && !e.aborted) throw e;
     }
   }
 }

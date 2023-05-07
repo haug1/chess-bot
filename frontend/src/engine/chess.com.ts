@@ -20,6 +20,8 @@ export class ChessComEngine extends ChessBotEngine {
     const target = document.querySelector(".play-controller-message");
     if (!target) throw new Error("Status target not found");
     const statusContainer = document.createElement("div");
+    statusContainer.style.width = "100000vh";
+    statusContainer.style.height = "25rem";
     target.insertBefore(statusContainer, target.firstChild);
     return statusContainer;
   }

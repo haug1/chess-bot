@@ -46,7 +46,7 @@ export class LichessEngine extends ChessBotEngine {
 
   protected scrapeMoves(): string[] {
     let moves: string[] = [];
-    for (const element of document.querySelectorAll("l4x u8t"))
+    for (const element of document.querySelectorAll("l4x kwdb"))
       if (element.textContent) moves.push(element.textContent);
     return moves;
   }
