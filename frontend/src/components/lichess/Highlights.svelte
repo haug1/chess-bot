@@ -1,7 +1,6 @@
 <script lang="ts">
   import Highlight from "./Highlight.svelte";
   import {
-    state,
     suggestedEnemyMoves,
     suggestedFriendlyMoves,
     type Move,
@@ -9,6 +8,7 @@
   import {
     getEnemyMoveColor,
     getFriendlyMoveColor,
+    showEnemyMove,
   } from "../common/highlight-colors";
 
   function calculate(pos: number, isBlack: boolean, isX = false) {
@@ -40,22 +40,14 @@
 </script>
 
 {#each friendlyMoves as move, i}
-  <Highlight
-    color={getFriendlyMoveColor(i, $state)}
-    x={move.from.x}
-    y={move.from.y}
-  />
-  <Highlight
-    color={getFriendlyMoveColor(i, $state)}
-    x={move.to.x}
-    y={move.to.y}
-  />
+  <Highlight color={getFriendlyMoveColor(i)} x={move.from.x} y={move.from.y} />
+  <Highlight color={getFriendlyMoveColor(i)} x={move.to.x} y={move.to.y} />
 {/each}
 {#each enemyMoves as move, i}
-  <Highlight
-    color={getEnemyMoveColor(i, $state)}
-    x={move.from.x}
-    y={move.from.y}
-  />
-  <Highlight color={getEnemyMoveColor(i, $state)} x={move.to.x} y={move.to.y} />
+  {#if showEnemyMove(move.from, friendlyMoves)}
+    <Highlight color={getEnemyMoveColor(i)} x={move.from.x} y={move.from.y} />
+  {/if}
+  {#if showEnemyMove(move.to, enemyMoves)}
+    <Highlight color={getEnemyMoveColor(i)} x={move.to.x} y={move.to.y} />
+  {/if}
 {/each}

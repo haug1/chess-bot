@@ -44,7 +44,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@/*": "./src",
-      "fetch-event-source": "./lib/fetch-event-source/bin/esm/index.js",
     },
   },
 });

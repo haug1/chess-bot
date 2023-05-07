@@ -1,4 +1,4 @@
-import { fetchEventSource } from "fetch-event-source";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 import type { Move } from "../state";
 
 export type StockfishResponse = {
@@ -35,10 +35,11 @@ export class StockfishClient {
   getEvaluation(
     moves: string[],
     refMoveCounter: number,
-    onEvaluation: (evaluation: StockfishResult) => void
+    onEvaluation: (evaluation: StockfishResult) => void | Promise<void>
   ): Promise<void> {
     this.abortController = new AbortController();
     const signal = this.abortController.signal;
+    const abort = this.abort;
     return new Promise(async (resolve, reject) => {
       try {
         await fetchEventSource("http://localhost:8080/moves/sse", {
@@ -48,47 +49,24 @@ export class StockfishClient {
           },
           body: JSON.stringify({ moves }),
           signal,
-          onmessage(msg) {
-            const stockfishResult: StockfishResult = JSON.parse(msg.data);
-            onEvaluation({ ...stockfishResult, refMoveCounter });
-          },
-          onclose() {
-            if (signal.aborted) {
-              reject({ aborted: true });
+          async onmessage(msg) {
+            try {
+              const response = { ...JSON.parse(msg.data), refMoveCounter };
+              await onEvaluation(response);
+            } catch (error) {
+              abort();
+              reject(error);
             }
-            resolve();
           },
           onerror(err) {
             reject(err);
           },
+          openWhenHidden: true,
         });
+        resolve();
       } catch (e) {
         reject(e);
       }
     });
-  }
-
-  /** retired */
-  public async getBestMoveBasedOnFEN(
-    moves: string[],
-    refMoveCounter: number
-  ): Promise<StockfishResult> {
-    this.abortController = new AbortController();
-    try {
-      const response = await fetch("http://localhost:8080/moves", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ moves }),
-        signal: this.abortController.signal,
-      });
-      return { ...(await response.json()), refMoveCounter };
-    } catch (e) {
-      if (e.name === "AbortError") throw { aborted: true };
-      else throw e;
-    } finally {
-      this.abortController = undefined;
-    }
   }
 }
