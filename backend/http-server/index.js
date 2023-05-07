@@ -1,7 +1,6 @@
 import yargs from 'yargs'
 import { startEngine } from '../src/index.js'
-import { fastify } from './config.js'
-import './logger.js'
+import { createServer } from './config.js'
 
 const { argv } = yargs(process.argv)
   .option('host', {
@@ -16,12 +15,18 @@ const { argv } = yargs(process.argv)
     type: 'number',
     default: 8080,
   })
+  .option('verbose', {
+    alias: 'v',
+    describe: 'Get more verbose output',
+    type: 'boolean',
+    default: false,
+  })
 
 ;(async function main() {
-  if (fastify.server?.listening) return
   try {
+    const server = createServer(argv.verbose)
     await startEngine()
-    return fastify.listen({
+    return server.listen({
       host: argv.host,
       port: argv.port,
     })
