@@ -1,0 +1,41 @@
+name: "Frontend bump and commit"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/frontend-on-push-master.yml"
+      - "frontend/**/*"
+      - "!.gitignore"
+      - "!**.md"
+      - "!**.MD"
+
+jobs:
+  frontend-build:
+    name: "Build frontend"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: "frontend/.nvmrc"
+      - name: build
+        run: |
+          npm ci
+          npm run build
+          git add .
+      - name: bump version
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          echo "RELEASE_VERSION=$(npm --no-git-tag-version version patch)" >> $GITHUB_ENV
+      - name: commit
+        run: |
+          git tag ${{env.RELEASE_VERSION}}
+          git commit -am 'ci(frontend): version bump to ${{env.RELEASE_VERSION}}'
+          git push origin master && git push --tags
