@@ -1,7 +1,7 @@
 import LichessHighlights from "../components/lichess/Highlights.svelte";
 import { ChessBotEngine } from "./base";
 
-function createSvg() {
+function createSvgWrapper() {
   // <svg x="-4" y="-4" viewBox="-4 -4 8 8">
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("class", "cg-shapes");
@@ -16,7 +16,7 @@ export class LichessEngine extends ChessBotEngine {
   protected get highlightsTarget(): Element {
     const target = document.querySelector("cg-container");
     if (!target) throw new Error("Highlights target not found");
-    const svg = createSvg();
+    const svg = createSvgWrapper();
     target.appendChild(svg);
     return svg;
   }
