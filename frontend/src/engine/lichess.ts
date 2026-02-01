@@ -35,7 +35,7 @@ export class LichessEngine extends ChessBotEngine {
 
   public isGame(): boolean {
     const gameReadyElement = document.querySelector(
-      ".message > div:nth-child(1)"
+      ".message > div:nth-child(1)",
     );
     const gameReady =
       (gameReadyElement &&
@@ -45,7 +45,7 @@ export class LichessEngine extends ChessBotEngine {
   }
 
   protected scrapeMoves(): string[] {
-    let moves: string[] = [];
+    const moves: string[] = [];
     for (const element of document.querySelectorAll("l4x kwdb"))
       if (element.textContent) moves.push(element.textContent);
     return moves;

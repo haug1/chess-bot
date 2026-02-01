@@ -39,11 +39,11 @@
   $: enemyMoves = $suggestedEnemyMoves.map((m) => calculatePoints(m));
 </script>
 
-{#each friendlyMoves as move, i}
+{#each friendlyMoves as move, i (i)}
   <Highlight color={getFriendlyMoveColor(i)} x={move.from.x} y={move.from.y} />
   <Highlight color={getFriendlyMoveColor(i)} x={move.to.x} y={move.to.y} />
 {/each}
-{#each enemyMoves as move, i}
+{#each enemyMoves as move, i (i)}
   {#if showEnemyMove(move.from, friendlyMoves)}
     <Highlight color={getEnemyMoveColor(i)} x={move.from.x} y={move.from.y} />
   {/if}

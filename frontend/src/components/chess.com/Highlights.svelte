@@ -8,7 +8,7 @@
   } from "../common/highlight-colors";
 </script>
 
-{#each $suggestedFriendlyMoves as friendlyMove, i}
+{#each $suggestedFriendlyMoves as friendlyMove, i (i)}
   <Highlight
     color={getFriendlyMoveColor(i)}
     x={friendlyMove.from.x}
@@ -20,7 +20,7 @@
     y={friendlyMove.to.y}
   />
 {/each}
-{#each $suggestedEnemyMoves as enemyMove, i}
+{#each $suggestedEnemyMoves as enemyMove, i (i)}
   {#if showEnemyMove(enemyMove.from, $suggestedFriendlyMoves)}
     <Highlight
       color={getEnemyMoveColor(i)}

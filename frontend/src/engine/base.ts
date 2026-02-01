@@ -19,13 +19,13 @@ export interface IChessBotEngine {
   resync(): void;
 }
 
-const isMoveNotEqual = (move1, move2) =>
+const isMoveNotEqual = (move1: Move, move2: Move) =>
   move1.from.x !== move2.from.x ||
   move1.from.y !== move2.from.y ||
   move1.to.x !== move2.to.x ||
   move1.to.y !== move2.to.y;
 
-const isMoveEqual = (move1, move2) =>
+const isMoveEqual = (move1: Move, move2: Move) =>
   move1.from.x === move2.from.x &&
   move1.from.y === move2.from.y &&
   move1.to.x === move2.to.x &&
@@ -42,8 +42,8 @@ export abstract class ChessBotEngine implements IChessBotEngine {
   private readonly _stockfish = new StockfishClient();
   private moveCounter = 0;
   private moveObserver?: MutationObserver;
-  private friendlyMoves: Move[];
-  private enemyMoves: Move[];
+  private friendlyMoves: Move[] = [];
+  private enemyMoves: Move[] = [];
 
   constructor() {
     suggestedFriendlyMoves.subscribe(
@@ -172,13 +172,14 @@ export abstract class ChessBotEngine implements IChessBotEngine {
         },
       );
     } catch (e) {
-      if (!e.stale && !e.aborted) throw e;
+      const error = e as { stale?: boolean; aborted?: boolean };
+      if (!error.stale && !error.aborted) throw e;
     }
   }
 }
 
-function getUniqueMoves(refMove) {
-  return (move, i, arr) => {
+function getUniqueMoves(refMove: Move) {
+  return (move: Move, i: number, arr: Move[]) => {
     const notEqualBestMove = isMoveNotEqual(move, refMove);
     const index = arr.findIndex((otherMove) => isMoveEqual(move, otherMove));
     const isNotEqualToOtherMoveInArr = index === i;
