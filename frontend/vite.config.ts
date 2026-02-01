@@ -11,7 +11,7 @@ const browserManifest = {
     {
       matches: ["https://www.chess.com/*", "https://lichess.org/*"],
       js: ["chess-bot.iife.js"],
-      css: ["style.css"],
+      css: ["chess-bot.css"],
     },
   ],
   permissions: ["activeTab", "*://localhost/*"],
@@ -20,6 +20,8 @@ const browserManifest = {
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
+    // minify: false,
+    // sourcemap: true,
     lib: {
       name: "ChessBot",
       fileName: "chess-bot",

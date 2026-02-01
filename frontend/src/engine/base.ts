@@ -1,4 +1,4 @@
-import type { ComponentType } from "svelte/internal";
+import { type Component, mount } from "svelte";
 import { StockfishClient, type StockfishResult } from "../api/stockfish";
 import {
   score,
@@ -32,7 +32,7 @@ const isMoveEqual = (move1, move2) =>
   move1.to.y === move2.to.y;
 
 export abstract class ChessBotEngine implements IChessBotEngine {
-  protected abstract Highlights: ComponentType;
+  protected abstract Highlights: Component;
   protected abstract get movesContainer(): Element | null;
   protected abstract get highlightsTarget(): Element | null;
   protected abstract get statusTarget(): Element | null;
@@ -47,26 +47,26 @@ export abstract class ChessBotEngine implements IChessBotEngine {
 
   constructor() {
     suggestedFriendlyMoves.subscribe(
-      (friendlyMoves) => (this.friendlyMoves = friendlyMoves)
+      (friendlyMoves) => (this.friendlyMoves = friendlyMoves),
     );
     suggestedEnemyMoves.subscribe(
-      (enemyMoves) => (this.enemyMoves = enemyMoves)
+      (enemyMoves) => (this.enemyMoves = enemyMoves),
     );
   }
 
   public mount() {
-    new Promise(
-      () =>
-        new this.Highlights({
-          target: this.highlightsTarget!,
-        })
-    );
-    new Promise(
-      () =>
-        new Status({
-          target: this.statusTarget!,
-        })
-    );
+    if (!this.highlightsTarget) {
+      const msg = "Highlights target is missing";
+      console.error(msg);
+      throw new Error(msg);
+    }
+    if (!this.statusTarget) {
+      const msg = "Status target is missing";
+      console.error(msg);
+      throw new Error(msg);
+    }
+    mount(this.Highlights, { target: this.highlightsTarget });
+    mount(Status, { target: this.statusTarget });
     this.onMoveObserved();
     this.startObservingMoves();
   }
@@ -102,7 +102,7 @@ export abstract class ChessBotEngine implements IChessBotEngine {
   private addTopMove(
     movesStore: Writable<Move[]>,
     move: Move,
-    cachedMoves: Move[]
+    cachedMoves: Move[],
   ) {
     movesStore.set([
       move,
@@ -134,13 +134,13 @@ export abstract class ChessBotEngine implements IChessBotEngine {
               this.addTopMove(
                 suggestedFriendlyMoves,
                 playerMove,
-                this.friendlyMoves
+                this.friendlyMoves,
               );
             if (opponentMove)
               this.addTopMove(
                 suggestedEnemyMoves,
                 opponentMove,
-                this.enemyMoves
+                this.enemyMoves,
               );
           }
 
@@ -156,20 +156,20 @@ export abstract class ChessBotEngine implements IChessBotEngine {
               this.addTopMove(
                 suggestedFriendlyMoves,
                 playerMove,
-                this.friendlyMoves
+                this.friendlyMoves,
               );
             if (opponentMove)
               this.addTopMove(
                 suggestedEnemyMoves,
                 opponentMove,
-                this.enemyMoves
+                this.enemyMoves,
               );
           }
 
           if (stockfishResult.score) {
             score.set(stockfishResult.score);
           }
-        }
+        },
       );
     } catch (e) {
       if (!e.stale && !e.aborted) throw e;

@@ -6,7 +6,7 @@
   $: classes = `highlight square-${x}${y}`;
 </script>
 
-<div class={classes} {style} />
+<div class={classes} {style}></div>
 
 <style>
   div {
