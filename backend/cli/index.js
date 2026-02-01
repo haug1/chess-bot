@@ -4,7 +4,7 @@ import {
   evalPosition,
   sendCommand,
   cancelCurrentOperation,
-} from '../src'
+} from '../src/index.js'
 ;(async () => {
   await startEngine()
   process.stdin.on('data', async (data) => {

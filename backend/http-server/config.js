@@ -3,7 +3,7 @@ import pretty from 'pino-pretty'
 import { evalPosition, cancelCurrentOperation } from '../src/index.js'
 import { getFenFromMoves } from './utils.js'
 
-export const createServer = (debug) => {
+export const createServer = (/** @type {boolean} */ debug) => {
   const server = createFastify({
     logger: {
       level: debug ? 'debug' : undefined,
@@ -33,13 +33,18 @@ export const createServer = (debug) => {
     })
     try {
       request.socket.on('end', () => cancelCurrentOperation())
-      await evalPosition(getFenFromMoves(request.body.moves), (v) => {
+      /** @typedef {Parameters<import('chess.js').Chess['move']>[0]} MoveInput */
+      /** @type {{ moves: MoveInput[] }} */
+      // @ts-ignore
+      const body = request.body
+      await evalPosition(getFenFromMoves(body.moves), (v) => {
         reply.raw.write(`data: ${JSON.stringify(v)}\n\n`)
       })
       reply.raw.end()
     } catch (e) {
       console.error(e)
-      reply.code(500).send({ message: e.message })
+      // @ts-ignore
+      reply.code(500).send({ message: e?.message })
     }
   })
 
@@ -59,21 +64,29 @@ export const createServer = (debug) => {
     })
     try {
       request.socket.on('end', () => cancelCurrentOperation())
-      await evalPosition(request.body, (v) => {
+      /** @type {string} */
+      // @ts-ignore
+      const body = request.body
+      await evalPosition(body, (v) => {
         reply.raw.write(`data: ${JSON.stringify(v)}\n\n`)
       })
       reply.raw.end()
     } catch (e) {
       console.error(e)
-      reply.code(500).send({ message: e.message })
+      // @ts-ignore
+      reply.code(500).send({ message: e?.message })
     }
   })
 
   // attach global logger
   Object.assign(console, {
+    // @ts-ignore
     debug: (...params) => params.forEach((param) => server.log.debug(param)),
+    // @ts-ignore
     error: (...params) => params.forEach((param) => server.log.error(param)),
+    // @ts-ignore
     log: (...params) => params.forEach((param) => server.log.info(param)),
+    // @ts-ignore
     warn: (...params) => params.forEach((param) => server.log.warn(param)),
   })
 

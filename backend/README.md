@@ -1,10 +1,10 @@
 # stockfish node.js wrapper
 
-Aims to provide a simple node.js wrapper for Stockfish that is up-to-date as best as possible and has an intuitive and user-friendly interface.
+## Stockfish
 
-(Does not attempt to run in the browser, but rather have a preference towards performance running as a separate desktop application.)
+Put stockfish binary as `bin/stockfish` relative to executable.
 
-## Components
+# Components
 
 - A simple Stockfish wrapper this simply exposes bare-bones functions to interact with the Stockfish CLI.
 - A function for evaluating a position based on a FEN string.
@@ -13,20 +13,10 @@ Aims to provide a simple node.js wrapper for Stockfish that is up-to-date as bes
 
 ## HTTP server
 
-Exposes an endpoint that returns a stream of Stockfish evaluations for a FEN string until the best move is found or the connection is closed.
+Exposes an endpoint that returns a stream of Stockfish evaluations for a given position (based on FEN or list of played moves) until the best move is found or the connection is closed.
 
 Does not handle concurrent requests, meaning there can only be one consumer of the API at a time. To handle concurrent requests one would probably have to launch more instances of the engine, which is currently not being done.
 
 ## CLI demo
 
 A very simple CLI demo for testing purposes and shows how the wrapper code can be utilized. (If you really want to interact with the Stockfish engine directly with UCI commands, it's really better to just run the officially distributed binary.)
-
-# TODO
-
-- offline mode
-
-The program currently requires an internet connection starting up because it checks for the latest version of Stockfish. There should be a fallback in case there is no internet connection and a Stockfish binary file is already available.
-
-- better self-updating of Stockfish
-
-The program currently self-updates the Stockfish engine version at launch. This may break the application if there are any compatibility changes. It seems unlikely to happen looking back at previous versions, but it would be nice to have some handling that automatically makes it fall back to a working version if it breaks completely.

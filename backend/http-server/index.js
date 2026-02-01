@@ -23,12 +23,13 @@ const { argv } = yargs(process.argv)
   })
 
 ;(async function main() {
+  const args = await argv
   try {
-    const server = createServer(argv.verbose)
+    const server = createServer(args.verbose)
     await startEngine()
     return server.listen({
-      host: argv.host,
-      port: argv.port,
+      host: args.host,
+      port: args.port,
     })
   } catch (err) {
     console.error(err)
