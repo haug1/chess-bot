@@ -4,21 +4,37 @@ import { ChessBotEngine } from "./base";
 export class ChessComEngine extends ChessBotEngine {
   public Highlights = ChessComHighlights;
 
-  protected get highlightsTarget(): Element {
-    const target = document.querySelector("chess-board");
-    if (!target) throw new Error("Highlights target not found");
+  private queryForElement(possible: string[], name: string) {
+    let target: HTMLElement;
+    for (const p of possible) {
+      target = document.querySelector(p);
+      if (target) {
+        break;
+      }
+    }
+    if (!target) throw new Error(`${name} target not found`);
     return target;
   }
 
+  protected get highlightsTarget(): Element {
+    return this.queryForElement(
+      ["chess-board", "wc-chess-board"],
+      "highlights target",
+    );
+  }
+
   protected get movesContainer(): Element {
-    const container = document.querySelector("vertical-move-list");
-    if (!container) throw new Error("Moves container not found");
-    return container;
+    return this.queryForElement(
+      ["vertical-move-list", "wc-simple-move-list"],
+      "moves container",
+    );
   }
 
   protected get statusTarget(): Element {
-    const target = document.querySelector(".play-controller-message");
-    if (!target) throw new Error("Status target not found");
+    const target = this.queryForElement(
+      [".play-controller-message", ".play-controller-messages"],
+      "status target",
+    );
     const statusContainer = document.createElement("div");
     statusContainer.style.width = "100000vh";
     statusContainer.style.height = "25rem";
@@ -27,13 +43,14 @@ export class ChessComEngine extends ChessBotEngine {
   }
 
   public isGame(): boolean {
-    return !!document.querySelector("vertical-move-list");
+    return !!this.movesContainer;
   }
 
   protected scrapeMoves(): string[] {
-    let moves: string[] = [];
-    for (const element of document.querySelectorAll(".move .node"))
-      if (element.textContent) moves.push(element.textContent);
-    return moves;
+    return this.movesContainer
+      .querySelectorAll(".node")
+      .values()
+      .map((n) => n.textContent.trim())
+      .toArray();
   }
 }
