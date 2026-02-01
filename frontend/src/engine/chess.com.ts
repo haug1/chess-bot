@@ -5,7 +5,7 @@ export class ChessComEngine extends ChessBotEngine {
   public Highlights = ChessComHighlights;
 
   private queryForElement(possible: string[], name: string) {
-    let target: HTMLElement;
+    let target: HTMLElement | null = null;
     for (const p of possible) {
       target = document.querySelector(p);
       if (target) {
